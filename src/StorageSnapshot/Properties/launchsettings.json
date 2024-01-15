@@ -1,0 +1,10 @@
+﻿{
+    "profiles": {
+      "StorageSnapshot (Package)": {
+        "commandName": "MsixPackage"
+      },
+      "StorageSnapshot (Unpackaged)": {
+        "commandName": "Project"
+      }
+    }
+}

@@ -1,0 +1,72 @@
+﻿<UserControl
+    x:Class="StorageSnapshot.Views.ListDetailsDetailControl"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d">
+    <ScrollViewer
+        Name="ForegroundElement"
+        HorizontalAlignment="Stretch"
+        VerticalScrollMode="Enabled"
+        IsTabStop="True">
+        <StackPanel HorizontalAlignment="Left">
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Left">
+                <FontIcon
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    FontSize="48"
+                    Glyph="{x:Bind ListDetailsMenuItem.Symbol, Mode=OneWay}"
+                    AutomationProperties.Name="{x:Bind ListDetailsMenuItem.SymbolName, Mode=OneWay}"  />
+                <TextBlock
+                    Margin="{StaticResource SmallLeftMargin}"
+                    VerticalAlignment="Center"
+                    Text="{x:Bind ListDetailsMenuItem.VolumeLabelAndName, Mode=OneWay}"
+                    Style="{ThemeResource TitleTextBlockStyle}" />
+            </StackPanel>
+            <StackPanel Padding="0,15,0,0">
+                <TextBlock
+                    Margin="{StaticResource SmallTopMargin}"
+                    Text="Drive type"
+                    Style="{StaticResource DetailSubTitleStyle}" />
+                <TextBlock Text="{x:Bind ListDetailsMenuItem.DriveType, Mode=OneWay}" Style="{StaticResource DetailBodyBaseMediumStyle}" />
+                <TextBlock
+                    Margin="{StaticResource SmallTopMargin}"
+                    Text="Is ready"
+                    Style="{StaticResource DetailSubTitleStyle}" />
+                <TextBlock Text="{x:Bind ListDetailsMenuItem.IsReady, Mode=OneWay}" Style="{StaticResource DetailBodyBaseMediumStyle}" />
+
+                <TextBlock
+                    Margin="{StaticResource SmallTopMargin}"
+                    Text="File system"
+                    Style="{StaticResource DetailSubTitleStyle}" />
+                <TextBlock Text="{x:Bind ListDetailsMenuItem.DriveFormat, Mode=OneWay}" Style="{StaticResource DetailBodyBaseMediumStyle}" />
+                <TextBlock
+                    Margin="{StaticResource SmallTopMargin}"
+                    Text="Volume label"
+                    Style="{StaticResource DetailSubTitleStyle}" />
+                <TextBlock Text="{x:Bind ListDetailsMenuItem.VolumeLabel, Mode=OneWay}" Style="{StaticResource DetailBodyBaseMediumStyle}" />
+
+                
+                <TextBlock
+                    Margin="{StaticResource MediumTopMargin}"
+                    Text="Total size"
+                    Style="{StaticResource DetailSubTitleStyle}" />
+                <TextBlock Text="{x:Bind ListDetailsMenuItem.TotalSize, Mode=OneWay}" Style="{StaticResource DetailBodyBaseMediumStyle}" />
+                
+                <TextBlock
+                    Margin="{StaticResource SmallTopMargin}"
+                    Text="Total free space"
+                    Style="{StaticResource DetailSubTitleStyle}" />
+                <TextBlock Text="{x:Bind ListDetailsMenuItem.TotalFreeSpace, Mode=OneWay}" Style="{StaticResource DetailBodyBaseMediumStyle}" />
+
+                <TextBlock
+                    Margin="{StaticResource SmallTopMargin}"
+                    Text="Available free space"
+                    Style="{StaticResource DetailSubTitleStyle}" />
+                <TextBlock Text="{x:Bind ListDetailsMenuItem.AvailableFreeSpace, Mode=OneWay}" Style="{StaticResource DetailBodyBaseMediumStyle}" />
+
+            </StackPanel>
+        </StackPanel>
+    </ScrollViewer>
+</UserControl>
