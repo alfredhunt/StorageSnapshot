@@ -41,9 +41,6 @@ jobs:
     - name: Setup MSBuild.exe
       uses: microsoft/setup-msbuild@v1.3.1
 
-    - name: List files in the repository
-      run: dir
-
     # Restore the application to populate the obj folder with RuntimeIdentifiers
     - name: Restore the application
       run: msbuild $env:Solution_Name /t:Restore /p:Configuration=$env:Configuration
@@ -59,7 +56,16 @@ jobs:
 
     # Create the app package by building and packaging the project
     - name: Create the app package
-      run: msbuild $env:Solution_Name /p:Configuration=$env:Configuration /p:Platform=$env:Platform /p:UapAppxPackageBuildMode=$env:Appx_Package_Build_Mode /p:AppxBundle=$env:Appx_Bundle /p:PackageCertificateKeyFile=GitHubActionsWorkflow.pfx /p:AppxPackageDir="$env:Appx_Package_Dir" /p:GenerateAppxPackageOnBuild=true
+      run: |
+        $env:Solution_Name \
+          /p:Configuration=$env:Configuration \
+          /p:Platform=$env:Platform \
+          /p:UapAppxPackageBuildMode=$env:Appx_Package_Build_Mode \
+          /p:AppxBundle=$env:Appx_Bundle \
+          /p:PackageCertificateKeyFile=GitHubActionsWorkflow.pfx \
+          /p:PackageCertificatePassword=${{ secrets.PFX_PASSWORD }} \
+          /p:AppxPackageDir="$env:Appx_Package_Dir" \
+          /p:GenerateAppxPackageOnBuild=true
       env:
         Appx_Bundle: Never
         Appx_Package_Build_Mode: SideloadOnly
@@ -71,12 +77,9 @@ jobs:
     - name: Remove the pfx
       run: Remove-Item -path GitHubActionsWorkflow.pfx
 
-    - name: List files in the repository
-      run: dir ${{env.WinUI_Project_name}}\Packages\
-
     # Upload the MSIX package: https://github.com/marketplace/actions/upload-a-build-artifact
     - name: Upload MSIX package
       uses: actions/upload-artifact@v4.1.0
       with:
-        name: ${{ env.WinUI_Project_name }}-${{ matrix.platform }}-${{ matrix.configuration }}-MSIX-Package
+        name: ${{ env.WinUI_Project_name }}-${{ matrix.platform }}-${{ matrix.configuration }}
         path: ${{ env.WinUI_Project_name }}\\Packages
