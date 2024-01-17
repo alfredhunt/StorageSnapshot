@@ -22,6 +22,7 @@ jobs:
                              # https://help.github.com/en/actions/reference/workflow-syntax-for-github-actions#jobsjob_idruns-on
 
     env:
+      WinUI_Project_name: StorageSnapshot
       Solution_Name: StorageSnapshot.sln                         # Replace with your solution name, i.e. App1.sln.
 
     steps:
@@ -71,7 +72,7 @@ jobs:
       run: Remove-Item -path GitHubActionsWorkflow.pfx
 
     - name: List files in the repository
-      run: dir
+      run: dir ${{env.WinUI_Project_name}}\Packages\
 
     # Upload the MSIX package: https://github.com/marketplace/actions/upload-a-build-artifact
     - name: Upload MSIX package
