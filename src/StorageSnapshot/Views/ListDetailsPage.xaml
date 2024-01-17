@@ -12,7 +12,7 @@
     mc:Ignorable="d">
     <Page.Resources>
         <DataTemplate x:Key="ItemTemplate" x:DataType="models:LocalStorageDevice">
-            <Grid Height="60">
+            <Grid Height="70">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto" />
                     <ColumnDefinition Width="*" />
@@ -29,6 +29,7 @@
                     VerticalAlignment="Center">
                     <TextBlock Text="{x:Bind VolumeLabelAndName}" Style="{StaticResource ListTitleStyle}" />
                     <TextBlock Text="{x:Bind TotalFreeSpaceOfTotalSize}" Style="{StaticResource ListSubTitleStyle}" />
+                    <ProgressBar Maximum="100" Value="{x:Bind PercentageInUse}" Style="{StaticResource ProgressBarStyle}" />
                 </StackPanel>
             </Grid>
         </DataTemplate>

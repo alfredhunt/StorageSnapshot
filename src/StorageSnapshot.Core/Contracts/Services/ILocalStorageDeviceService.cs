@@ -6,8 +6,9 @@ using System.Threading.Tasks;
 using StorageSnapshot.Core.Models;
 
 namespace StorageSnapshot.Core.Contracts.Services;
-public interface IStorageDeviceService
+public interface ILocalStorageDeviceService
 {
     Task<IEnumerable<LocalStorageDevice>> GetAllLocalStorageDevicesAsync();
+    Task GetLocalStorageDeviceDetailsAsync(LocalStorageDevice localStorageDevice);
 
 }

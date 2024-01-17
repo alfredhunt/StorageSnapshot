@@ -10,11 +10,11 @@ namespace StorageSnapshot.ViewModels;
 
 public partial class DataGridViewModel : ObservableRecipient, INavigationAware
 {
-    private readonly IStorageDeviceService _storageDeviceService;
+    private readonly ILocalStorageDeviceService _storageDeviceService;
 
     public ObservableCollection<LocalStorageDevice> Source { get; } = new ObservableCollection<LocalStorageDevice>();
 
-    public DataGridViewModel(IStorageDeviceService storageDeviceService)
+    public DataGridViewModel(ILocalStorageDeviceService storageDeviceService)
     {
         _storageDeviceService = storageDeviceService;
     }

@@ -8,12 +8,12 @@ namespace StorageSnapshot.ViewModels;
 
 public partial class ContentGridDetailViewModel : ObservableRecipient, INavigationAware
 {
-    private readonly IStorageDeviceService _storageDeviceService;
+    private readonly ILocalStorageDeviceService _storageDeviceService;
 
     [ObservableProperty]
     private LocalStorageDevice? item;
 
-    public ContentGridDetailViewModel(IStorageDeviceService storageDeviceService)
+    public ContentGridDetailViewModel(ILocalStorageDeviceService storageDeviceService)
     {
         _storageDeviceService = storageDeviceService;
     }

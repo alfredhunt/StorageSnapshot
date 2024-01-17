@@ -10,14 +10,14 @@ namespace StorageSnapshot.ViewModels;
 
 public partial class ListDetailsViewModel : ObservableRecipient, INavigationAware
 {
-    private readonly IStorageDeviceService _storageDeviceService;
+    private readonly ILocalStorageDeviceService _storageDeviceService;
 
     [ObservableProperty]
     private LocalStorageDevice? selected;
 
     public ObservableCollection<LocalStorageDevice> LocalStorageDevices { get; private set; } = new ObservableCollection<LocalStorageDevice>();
 
-    public ListDetailsViewModel(IStorageDeviceService storageDeviceService)
+    public ListDetailsViewModel(ILocalStorageDeviceService storageDeviceService)
     {
         _storageDeviceService = storageDeviceService;
     }

@@ -24,49 +24,53 @@
                     Text="{x:Bind ListDetailsMenuItem.VolumeLabelAndName, Mode=OneWay}"
                     Style="{ThemeResource TitleTextBlockStyle}" />
             </StackPanel>
-            <StackPanel Padding="0,15,0,0">
-                <TextBlock
+            <RelativePanel>
+
+                <StackPanel x:Name="listDetailsGroup1" Padding="0,15,0,0">
+                    <TextBlock
                     Margin="{StaticResource SmallTopMargin}"
                     Text="Drive type"
                     Style="{StaticResource DetailSubTitleStyle}" />
-                <TextBlock Text="{x:Bind ListDetailsMenuItem.DriveType, Mode=OneWay}" Style="{StaticResource DetailBodyBaseMediumStyle}" />
-                <TextBlock
+                    <TextBlock Text="{x:Bind ListDetailsMenuItem.DriveType, Mode=OneWay}" Style="{StaticResource DetailBodyBaseMediumStyle}" />
+                    <TextBlock
                     Margin="{StaticResource SmallTopMargin}"
                     Text="Is ready"
                     Style="{StaticResource DetailSubTitleStyle}" />
-                <TextBlock Text="{x:Bind ListDetailsMenuItem.IsReady, Mode=OneWay}" Style="{StaticResource DetailBodyBaseMediumStyle}" />
+                    <TextBlock Text="{x:Bind ListDetailsMenuItem.IsReady, Mode=OneWay}" Style="{StaticResource DetailBodyBaseMediumStyle}" />
 
-                <TextBlock
+                    <TextBlock
                     Margin="{StaticResource SmallTopMargin}"
                     Text="File system"
                     Style="{StaticResource DetailSubTitleStyle}" />
-                <TextBlock Text="{x:Bind ListDetailsMenuItem.DriveFormat, Mode=OneWay}" Style="{StaticResource DetailBodyBaseMediumStyle}" />
-                <TextBlock
+                    <TextBlock Text="{x:Bind ListDetailsMenuItem.DriveFormat, Mode=OneWay}" Style="{StaticResource DetailBodyBaseMediumStyle}" />
+                    <TextBlock
                     Margin="{StaticResource SmallTopMargin}"
                     Text="Volume label"
                     Style="{StaticResource DetailSubTitleStyle}" />
-                <TextBlock Text="{x:Bind ListDetailsMenuItem.VolumeLabel, Mode=OneWay}" Style="{StaticResource DetailBodyBaseMediumStyle}" />
+                    <TextBlock Text="{x:Bind ListDetailsMenuItem.VolumeLabel, Mode=OneWay}" Style="{StaticResource DetailBodyBaseMediumStyle}" />
+                </StackPanel>
 
-                
-                <TextBlock
+                <StackPanel x:Name="listDetailsGroup2" Padding="0,15,0,0" RelativePanel.RightOf="listDetailsGroup1">
+                    <TextBlock
                     Margin="{StaticResource MediumTopMargin}"
                     Text="Total size"
                     Style="{StaticResource DetailSubTitleStyle}" />
-                <TextBlock Text="{x:Bind ListDetailsMenuItem.TotalSize, Mode=OneWay}" Style="{StaticResource DetailBodyBaseMediumStyle}" />
-                
-                <TextBlock
+                    <TextBlock Text="{x:Bind ListDetailsMenuItem.TotalSize, Mode=OneWay}" Style="{StaticResource DetailBodyBaseMediumStyle}" />
+
+                    <TextBlock
                     Margin="{StaticResource SmallTopMargin}"
                     Text="Total free space"
                     Style="{StaticResource DetailSubTitleStyle}" />
-                <TextBlock Text="{x:Bind ListDetailsMenuItem.TotalFreeSpace, Mode=OneWay}" Style="{StaticResource DetailBodyBaseMediumStyle}" />
+                    <TextBlock Text="{x:Bind ListDetailsMenuItem.TotalFreeSpace, Mode=OneWay}" Style="{StaticResource DetailBodyBaseMediumStyle}" />
 
-                <TextBlock
+                    <TextBlock
                     Margin="{StaticResource SmallTopMargin}"
                     Text="Available free space"
                     Style="{StaticResource DetailSubTitleStyle}" />
-                <TextBlock Text="{x:Bind ListDetailsMenuItem.AvailableFreeSpace, Mode=OneWay}" Style="{StaticResource DetailBodyBaseMediumStyle}" />
+                    <TextBlock Text="{x:Bind ListDetailsMenuItem.AvailableFreeSpace, Mode=OneWay}" Style="{StaticResource DetailBodyBaseMediumStyle}" />
+                </StackPanel>
 
-            </StackPanel>
+            </RelativePanel>
         </StackPanel>
     </ScrollViewer>
 </UserControl>

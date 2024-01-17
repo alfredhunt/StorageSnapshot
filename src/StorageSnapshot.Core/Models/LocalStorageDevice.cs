@@ -9,6 +9,7 @@ namespace StorageSnapshot.Core.Models;
 public class LocalStorageDevice
 {
     private DriveInfo _driveInfo = null;
+    public LocalStorageDeviceDetails Details { get; private set; } = new LocalStorageDeviceDetails();
     public string Name => _driveInfo.Name;
     public DriveType DriveType => _driveInfo.DriveType;
     public bool IsReady => _driveInfo.IsReady;
@@ -17,13 +18,12 @@ public class LocalStorageDevice
     public long TotalSize => _driveInfo.TotalSize;
     public long TotalFreeSpace => _driveInfo.TotalFreeSpace;
     public long AvailableFreeSpace => _driveInfo.AvailableFreeSpace;
+    public double PercentageInUse => ((TotalSize - TotalFreeSpace) / (double)TotalSize) * 100;
     public DirectoryInfo RootDirectory => _driveInfo.RootDirectory;
-
     public string VolumeLabelAndName => $"{VolumeLabel} ({Name})";
     public string TotalSizeFormatted => FormatSizeInBytes.FormatByteSize(TotalSize);
     public string TotalFreeSpaceFormatted => FormatSizeInBytes.FormatByteSize(TotalFreeSpace);
     public string AvailableFreeSpaceFormatted => FormatSizeInBytes.FormatByteSize(AvailableFreeSpace);
-
     public string TotalFreeSpaceOfTotalSize => $"{TotalFreeSpaceFormatted} free of {TotalSizeFormatted}";
 
     public int SymbolCode
@@ -39,6 +39,7 @@ public class LocalStorageDevice
     public LocalStorageDevice(DriveInfo driveInfo)
     {
         _driveInfo = driveInfo;
+        // https://learn.microsoft.com/en-us/windows/apps/design/style/segoe-ui-symbol-font
         SymbolCode = 60834;
         SymbolName = "HardDisk";
     }

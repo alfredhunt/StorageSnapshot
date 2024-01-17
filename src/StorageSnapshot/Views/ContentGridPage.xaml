@@ -34,6 +34,7 @@
                                 HorizontalAlignment="Center"
                                 Style="{ThemeResource BodyTextStyle}"
                                 Text="{x:Bind VolumeLabelAndName}" />
+                            <ProgressBar Maximum="100" Value="{x:Bind PercentageInUse}" Style="{StaticResource ProgressBarStyle}" />
                         </StackPanel>
                     </Grid>
                 </DataTemplate>

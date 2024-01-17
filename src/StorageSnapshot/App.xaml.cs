@@ -71,7 +71,9 @@ public partial class App : Application
             // Core Services
             services.AddSingleton<ISampleDataService, SampleDataService>();
             services.AddSingleton<IFileService, FileService>();
-            services.AddSingleton<IStorageDeviceService, StorageDeviceService>();
+            services.AddSingleton<ILocalStorageDeviceService, LocalStorageDeviceService>();
+
+            services.AddHostedService<LocalStorageDeviceBackgroundService>();
 
             // Views and ViewModels
             services.AddTransient<SettingsViewModel>();
@@ -97,6 +99,8 @@ public partial class App : Application
         App.GetService<IAppNotificationService>().Initialize();
 
         UnhandledException += App_UnhandledException;
+        
+        Host.Start();
     }
 
     private void App_UnhandledException(object sender, Microsoft.UI.Xaml.UnhandledExceptionEventArgs e)

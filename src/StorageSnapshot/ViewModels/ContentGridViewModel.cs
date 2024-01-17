@@ -14,11 +14,11 @@ namespace StorageSnapshot.ViewModels;
 public partial class ContentGridViewModel : ObservableRecipient, INavigationAware
 {
     private readonly INavigationService _navigationService;
-    private readonly IStorageDeviceService _storageDeviceService;
+    private readonly ILocalStorageDeviceService _storageDeviceService;
 
     public ObservableCollection<LocalStorageDevice> Source { get; } = new ObservableCollection<LocalStorageDevice>();
 
-    public ContentGridViewModel(INavigationService navigationService, IStorageDeviceService storageDeviceService)
+    public ContentGridViewModel(INavigationService navigationService, ILocalStorageDeviceService storageDeviceService)
     {
         _navigationService = navigationService;
         _storageDeviceService = storageDeviceService;

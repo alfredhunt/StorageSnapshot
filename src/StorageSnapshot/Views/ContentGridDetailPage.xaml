@@ -58,6 +58,7 @@
                         RelativePanel.RightOf="itemHero"
                         Style="{ThemeResource TitleTextBlockStyle}"
                         Text="{x:Bind ViewModel.Item.VolumeLabelAndName, Mode=OneWay}" />
+            
 
                     <StackPanel x:Name="propertiesGroup1" RelativePanel.Below="itemHero">
                         <StackPanel x:Name="driveTypeGroup" Margin="{StaticResource SmallTopMargin}">
@@ -65,12 +66,7 @@
                             <TextBlock Style="{ThemeResource BodyTextBlockStyle}" Text="{x:Bind ViewModel.Item.DriveType}" />
                         </StackPanel>
 
-                        <StackPanel x:Name="isReadyGroup" Margin="{StaticResource SmallTopMargin}">
-                            <TextBlock Style="{ThemeResource SubtitleTextBlockStyle}" Text="Is ready" />
-                            <TextBlock Style="{ThemeResource BodyTextBlockStyle}" Text="{x:Bind ViewModel.Item.IsReady}" />
-                        </StackPanel>
-
-                        <StackPanel x:Name="driveFormatGroup" Margin="{StaticResource SmallTopMargin}">
+                         <StackPanel x:Name="driveFormatGroup" Margin="{StaticResource SmallTopMargin}">
                             <TextBlock Style="{ThemeResource SubtitleTextBlockStyle}" Text="Drive format" />
                             <TextBlock Style="{ThemeResource BodyTextBlockStyle}" Text="{x:Bind ViewModel.Item.DriveFormat}" />
                         </StackPanel>
@@ -97,6 +93,22 @@
                             <TextBlock Style="{ThemeResource BodyTextBlockStyle}" Text="{x:Bind ViewModel.Item.AvailableFreeSpaceFormatted}" />
                         </StackPanel>
                     </StackPanel>
+                    
+                    <TextBlock
+                        x:Name="analysis"
+                        RelativePanel.Below="propertiesGroup2"
+                        Style="{ThemeResource TitleTextBlockStyle}"
+                        Text="Drive Analysis" />
+
+                    <controls:DataGrid RelativePanel.Below="analysis"
+                        AutoGenerateColumns="True"
+                        GridLinesVisibility="Horizontal"
+                        ItemsSource="{x:Bind ViewModel.Item.Details.MimeTypeDetails, Mode=OneWay}">
+                        <controls:DataGrid.Resources>
+                            <SolidColorBrush x:Key="DataGridColumnHeaderBackgroundColor" Color="Transparent" />
+                        </controls:DataGrid.Resources>
+
+                    </controls:DataGrid>
 
                 </RelativePanel>
 
