@@ -12,7 +12,7 @@
 
   <Identity
     Name="44405e0a-231c-4136-b70c-ac8b9c57595d"
-    Publisher="CN=alfredhunt"
+    Publisher="CN=StorageSnapshot"
     Version="0.0.1.0" />
     
   <mp:PhoneIdentity PhoneProductId="44405e0a-231c-4136-b70c-ac8b9c57595d" PhonePublisherId="00000000-0000-0000-0000-000000000000"/>
