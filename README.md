@@ -36,7 +36,7 @@ StorageSnapshot is built on WinUI 3. The application can be side loaded by downl
 
 ## License
 
-This project is licensed under the MIT License - see the LICENSE.md file for details
+This project is licensed under the MIT License - see the LICENSE.md file for details.
 
 ## Acknowledgments
 
