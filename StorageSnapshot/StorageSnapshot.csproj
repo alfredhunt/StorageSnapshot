@@ -13,6 +13,16 @@
 	<Nullable>enable</Nullable>
 	<UseWinUI>true</UseWinUI>
     <EnableMsixTooling>true</EnableMsixTooling>
+    <GenerateAppInstallerFile>False</GenerateAppInstallerFile>
+    <AppxPackageSigningEnabled>True</AppxPackageSigningEnabled>
+    <PackageCertificateKeyFile>StorageSnapshot_TemporaryKey.pfx</PackageCertificateKeyFile>
+    <AppxPackageSigningTimestampDigestAlgorithm>SHA256</AppxPackageSigningTimestampDigestAlgorithm>
+    <AppxAutoIncrementPackageRevision>False</AppxAutoIncrementPackageRevision>
+    <AppxSymbolPackageEnabled>False</AppxSymbolPackageEnabled>
+    <GenerateTestArtifacts>True</GenerateTestArtifacts>
+    <AppxBundle>Auto</AppxBundle>
+    <AppxBundlePlatforms>x86|x64</AppxBundlePlatforms>
+    <AppxPackageDir>$(MSBuildThisFileDirectory)bin\AppPackages\</AppxPackageDir>
   </PropertyGroup>
 
   <ItemGroup>
