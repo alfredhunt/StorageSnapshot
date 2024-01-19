@@ -9,8 +9,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "StorageSnapshot.Core", "Sto
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{9201F8EB-F81E-463C-9BF0-C667C7264215}"
 	ProjectSection(SolutionItems) = preProject
-		.github\workflows\dotnet-desktop.yml = .github\workflows\dotnet-desktop.yml
 		README.md = README.md
+		.github\workflows\windows-build-and-release.yml = .github\workflows\windows-build-and-release.yml
+		.github\workflows\windows-build.yml = .github\workflows\windows-build.yml
 	EndProjectSection
 EndProject
 Global

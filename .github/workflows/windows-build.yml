@@ -1,0 +1,112 @@
+# This workflow will build, sign, and package a WinUI 3 MSIX desktop application
+# built on .NET.
+
+name: Build WinUI 3 MSIX App
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+
+  build:
+
+    strategy:
+      matrix:
+        configuration: [Release]
+        platform: [x64, x86]
+
+    runs-on: windows-latest  # For a list of available runner types, refer to
+                             # https://help.github.com/en/actions/reference/workflow-syntax-for-github-actions#jobsjob_idruns-on
+
+    env:
+      Solution_Name: StorageSnapshot.sln
+      Project_Directory: StorageSnapshot
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4.1.1
+      with:
+        fetch-depth: 0
+
+    # Install the .NET Core workload
+    - name: Install .NET Core
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: 7.0.x
+
+    # Add  MSBuild to the PATH: https://github.com/microsoft/setup-msbuild
+    - name: Setup MSBuild.exe
+      uses: microsoft/setup-msbuild@v1.3.1
+
+    - name: Install GitVersion
+      uses: gittools/actions/gitversion/setup@v0
+      with:
+        versionSpec: '5.x'
+
+    - name: Determine Version
+      id:   gitversion # id to later be referenced
+      uses: gittools/actions/gitversion/execute@v0
+
+    - name: Update AppxManifest Version
+      run: |
+        Write-Host "AssemblySemFileVer: ${{ steps.gitversion.outputs.assemblySemFileVer }}"
+        $version = "${{ steps.gitversion.outputs.assemblySemFileVer }}"
+
+        [xml]$manifest = Get-Content -Path "${{ env.Project_Directory }}\Package.appxmanifest"
+        $identity = $manifest.Package.Identity
+
+        # Print out the current version
+        Write-Host "Current version: $($identity.Version)"
+
+        # Update the version
+        $identity.Version = $version
+
+        # Print out the updated version
+        Write-Host "Updated version: $($identity.Version)"
+
+        # Save the changes to the manifest file
+        $manifest.Save("${{ env.Project_Directory }}\Package.appxmanifest")
+      shell: pwsh
+
+    # Restore the application to populate the obj folder with RuntimeIdentifiers
+    - name: Restore the application
+      run: msbuild $env:Solution_Name /t:Restore /p:Configuration=$env:Configuration
+      env:
+        Configuration: ${{ matrix.configuration }}
+
+    # Decode the base 64 encoded pfx and save the Signing_Certificate
+    - name: Decode the pfx
+      run: |
+        $pfx_cert_byte = [System.Convert]::FromBase64String("${{ secrets.BASE64_ENCODED_PFX }}")
+        $certificatePath = Join-Path -Path $env:Project_Directory -ChildPath StorageSnapshot_TemporaryKey.pfx
+        [IO.File]::WriteAllBytes("$certificatePath", $pfx_cert_byte)
+
+    # Create the app package by building and packaging the project
+    - name: Create the app package
+      run: msbuild $env:Solution_Name /p:Configuration=$env:Configuration /p:Platform=$env:Platform /p:UapAppxPackageBuildMode=$env:Appx_Package_Build_Mode /p:AppxBundle=$env:Appx_Bundle /p:PackageCertificateKeyFile=StorageSnapshot_TemporaryKey.pfx /p:AppxPackageDir="$env:Appx_Package_Dir" /p:GenerateAppxPackageOnBuild=true
+      env:
+        Appx_Bundle: Never
+        Appx_Package_Build_Mode: SideloadOnly
+        Appx_Package_Dir: Packages\
+        Configuration: ${{ matrix.configuration }}
+        Platform: ${{ matrix.platform }}
+
+    # Remove the pfx
+    - name: Remove the pfx
+      run: Remove-Item -path $env:Project_Directory\StorageSnapshot_TemporaryKey.pfx
+
+    # Display package folder contents
+    - name: Print Package folder contents
+      run: |
+        $files = Get-ChildItem -Path "${{ env.Project_Directory }}\Packages" -Recurse
+        foreach ($file in $files) { Write-Host $file.FullName }
+
+    # Upload the MSIX package: https://github.com/marketplace/actions/upload-a-build-artifact
+    - name: Upload MSIX package
+      uses: actions/upload-artifact@v4.1.0
+      with:
+        name: ${{ env.Project_Directory }}_${{ matrix.platform }}_${{ matrix.configuration }}
+        path: ${{ env.Project_Directory }}/Packages/**/StorageSnapshot*.msix

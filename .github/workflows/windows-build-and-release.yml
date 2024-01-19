@@ -1,13 +1,12 @@
 # This workflow will build, sign, and package a WinUI 3 MSIX desktop application
 # built on .NET.
 
-name: WinUI 3 MSIX App
+name: Build and Release WinUI 3 MSIX App
 
 on:
   push:
-    branches: [ main ]
-  pull_request:
-    branches: [ main ]
+    tags:
+      - 'v*'
 
 jobs:
 
@@ -39,7 +38,7 @@ jobs:
       with:
         dotnet-version: 7.0.x
 
-    # Add  MSBuild to the PATH: https://github.com/microsoft/setup-msbuild
+    # Add MSBuild to the PATH: https://github.com/microsoft/setup-msbuild
     - name: Setup MSBuild.exe
       uses: microsoft/setup-msbuild@v1.3.1
 
@@ -56,7 +55,6 @@ jobs:
       run: |
         Write-Host "AssemblySemFileVer: ${{ steps.gitversion.outputs.assemblySemFileVer }}"
         $version = "${{ steps.gitversion.outputs.assemblySemFileVer }}"
-
 
         [xml]$manifest = Get-Content -Path "${{ env.Project_Directory }}\Package.appxmanifest"
         $identity = $manifest.Package.Identity
@@ -114,14 +112,15 @@ jobs:
         name: ${{ env.Project_Directory }}_${{ matrix.platform }}_${{ matrix.configuration }}
         path: ${{ env.Project_Directory }}/Packages/**/StorageSnapshot*.msix
 
+    # Release if on main
     - name: Create GH release
       if: github.ref_name == 'main'
       uses: softprops/action-gh-release@v1
       with:
         draft: true
         prerelease: true
-        name: '${{ steps.gitversion.outputs.GitVersion_AssemblySemFileVer }}'
-        tag_name: 'v${{ steps.gitversion.outputs.GitVersion_AssemblySemFileVer }}'
+        name: '${{ steps.gitversion.outputs.assemblySemFileVer }}'
+        tag_name: 'v${{ steps.gitversion.outputs.assemblySemFileVer }}'
         body: 'To install the MSIX version, you first have to add the certificate included in the MSIX (only need to do that once).'
         files: |
           ${{ env.Project_Directory }}/Packages/**/StorageSnapshot*.msix
