@@ -78,7 +78,7 @@ jobs:
     - name: Decode the pfx
       run: |
         $pfx_cert_byte = [System.Convert]::FromBase64String("${{ secrets.BASE64_ENCODED_PFX }}")
-        $certificatePath = Join-Path -Path ${{ env:Project_Directory }} -ChildPath StorageSnapshot_TemporaryKey.pfx
+        $certificatePath = Join-Path -Path $env:Project_Directory -ChildPath StorageSnapshot_TemporaryKey.pfx
         [IO.File]::WriteAllBytes("$certificatePath", $pfx_cert_byte)
 
     # Create the app package by building and packaging the project
@@ -93,7 +93,7 @@ jobs:
 
     # Remove the pfx
     - name: Remove the pfx
-      run: Remove-Item -path ${{ env:Project_Directory }}\StorageSnapshot_TemporaryKey.pfx
+      run: Remove-Item -path $env:Project_Directory\StorageSnapshot_TemporaryKey.pfx
 
     # Upload the MSIX package: https://github.com/marketplace/actions/upload-a-build-artifact
     - name: Upload MSIX package
