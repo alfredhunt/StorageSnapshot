@@ -117,7 +117,7 @@ jobs:
       if: github.ref_name == 'main'
       uses: softprops/action-gh-release@v1
       with:
-        draft: true
+        draft: false
         prerelease: true
         name: '${{ steps.gitversion.outputs.assemblySemFileVer }}'
         tag_name: 'v${{ steps.gitversion.outputs.assemblySemFileVer }}'
