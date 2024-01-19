@@ -114,7 +114,6 @@ jobs:
 
     # Release if on main
     - name: Create GH release
-      if: github.ref_name == 'main'
       uses: softprops/action-gh-release@v1
       with:
         draft: false
