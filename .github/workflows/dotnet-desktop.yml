@@ -52,20 +52,24 @@ jobs:
 
     - name: Update AppxManifest Version
       run: |
-        [xml]$manifest = Get-Content -Path "${{ env.Project_Directory }}\Package.appxmanifest"
+        Write-Host "AssemblySemFileVer: ${{ steps.gitversion.outputs.assemblySemFileVer }}"
+        $version = "${{ steps.gitversion.outputs.assemblySemFileVer }}"
+
+
+        [xml]$manifest = Get-Content -Path "$env.Project_Directory\Package.appxmanifest"
         $identity = $manifest.Package.Identity
 
         # Print out the current version
         Write-Host "Current version: $($identity.Version)"
 
         # Update the version
-        $identity.Version = "${{ steps.gitversion.outputs.GitVersion_AssemblySemFileVer }}"
+        $identity.Version = $version
 
         # Print out the updated version
         Write-Host "Updated version: $($identity.Version)"
 
         # Save the changes to the manifest file
-        $manifest.Save("${{ env.Project_Directory }}\Package.appxmanifest")
+        $manifest.Save("$env.Project_Directory\Package.appxmanifest")
       shell: pwsh
 
     # Restore the application to populate the obj folder with RuntimeIdentifiers
