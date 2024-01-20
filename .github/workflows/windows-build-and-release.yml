@@ -99,18 +99,12 @@ jobs:
     - name: Remove the pfx
       run: Remove-Item -path $env:Project_Directory\StorageSnapshot_TemporaryKey.pfx
 
-    # Display package folder contents
-    - name: Print Package folder contents
-      run: |
-        $files = Get-ChildItem -Path "${{ env.Project_Directory }}\Packages" -Recurse
-        foreach ($file in $files) { Write-Host $file.FullName }
-
     # Upload the MSIX package: https://github.com/marketplace/actions/upload-a-build-artifact
     - name: Upload MSIX package
       uses: actions/upload-artifact@v4.1.0
       with:
         name: ${{ env.Project_Directory }}_${{ matrix.platform }}_${{ matrix.configuration }}
-        path: ${{ env.Project_Directory }}/Packages/**/StorageSnapshot*.msix
+        path: ${{ env.Project_Directory }}/Packages/
 
     # Release if on main
     - name: Create GH release
@@ -118,9 +112,9 @@ jobs:
       with:
         draft: false
         prerelease: true
-        name: '${{ steps.gitversion.outputs.assemblySemFileVer }}'
-        tag_name: 'v${{ steps.gitversion.outputs.assemblySemFileVer }}'
+        name: 'StorageSnapshot v${{ steps.gitversion.outputs.majorminorpatch }}'
+        tag_name: 'v${{ steps.gitversion.outputs.majorminorpatch }}'
         body: 'To install the MSIX version, you first have to add the certificate included in the MSIX (only need to do that once).'
         files: |
-          ${{ env.Project_Directory }}/Packages/**/StorageSnapshot*.msix
+          ${{ env.Project_Directory }}/Packages/
         fail_on_unmatched_files: true

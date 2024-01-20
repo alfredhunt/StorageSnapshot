@@ -21,7 +21,7 @@ StorageSnapshot is built on WinUI 3. The application can be side loaded by downl
 
 ### Installing
 
-- Download the latest MSIX installer from the releases page
+- Download the latest MSIX installer from the [releases](https://github.com/alfredhunt/StorageSnapshot/releases) page.
 
 ### Executing Program
 
