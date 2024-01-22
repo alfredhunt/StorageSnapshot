@@ -17,7 +17,7 @@ public class LocalStorageDeviceBackgroundService : BackgroundService
         foreach (var localStorageDevice in localStorageDevices)
         {
             // This will cache the details for each device.
-            _localStorageDeviceService.GetLocalStorageDeviceDetailsAsync(localStorageDevice);
+            await _localStorageDeviceService.GetLocalStorageDeviceDetailsAsync(localStorageDevice);
         }
     }
 }

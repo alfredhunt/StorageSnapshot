@@ -1,4 +1,6 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using ColorCode.Compilation.Languages;
+using CommunityToolkit.Mvvm.Messaging;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.UI.Xaml;
 
@@ -74,6 +76,7 @@ public partial class App : Application
             services.AddSingleton<ILocalStorageDeviceService, LocalStorageDeviceService>();
 
             services.AddHostedService<LocalStorageDeviceBackgroundService>();
+            services.AddHostedService<USBStorageDeviceBackgroundService>();
 
             // Views and ViewModels
             services.AddTransient<SettingsViewModel>();
@@ -96,11 +99,36 @@ public partial class App : Application
         }).
         Build();
 
+        WeakReferenceMessenger.Default.Register<UsbDeviceAddedMessage>(this, (r, m) =>
+        {
+            // Handle the message here, with r being the recipient and m being the
+            // input message. Using the recipient passed as input makes it so that
+            // the lambda expression doesn't capture "this", improving performance.
+            App.MainWindow.DispatcherQueue.TryEnqueue(() =>
+            {
+                App.GetService<IAppNotificationService>().Show(string.Format("AppNotificationUSBDeviceAdded".GetLocalized(), AppContext.BaseDirectory));
+            });
+        });
+
+
+        WeakReferenceMessenger.Default.Register<UsbDeviceRemovedMessage>(this, (r, m) =>
+        {
+            // Handle the message here, with r being the recipient and m being the
+            // input message. Using the recipient passed as input makes it so that
+            // the lambda expression doesn't capture "this", improving performance.
+            App.MainWindow.DispatcherQueue.TryEnqueue(() =>
+            {
+                App.GetService<IAppNotificationService>().Show(string.Format("AppNotificationUSBDeviceRemoved".GetLocalized(), AppContext.BaseDirectory));
+            });
+        });
+
+
         App.GetService<IAppNotificationService>().Initialize();
 
         UnhandledException += App_UnhandledException;
         
         Host.Start();
+
     }
 
     private void App_UnhandledException(object sender, Microsoft.UI.Xaml.UnhandledExceptionEventArgs e)
@@ -113,7 +141,7 @@ public partial class App : Application
     {
         base.OnLaunched(args);
 
-        App.GetService<IAppNotificationService>().Show(string.Format("AppNotificationSamplePayload".GetLocalized(), AppContext.BaseDirectory));
+        //App.GetService<IAppNotificationService>().Show(string.Format("AppNotificationSamplePayload".GetLocalized(), AppContext.BaseDirectory));
 
         await App.GetService<IActivationService>().ActivateAsync(args);
     }

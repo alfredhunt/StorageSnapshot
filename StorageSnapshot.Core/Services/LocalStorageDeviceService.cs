@@ -10,9 +10,6 @@ public class LocalStorageDeviceService : ILocalStorageDeviceService
 {
     private List<LocalStorageDevice> _allStorageDeviceInfos;
 
-    private readonly Dictionary<LocalStorageDevice, Task<LocalStorageDeviceDetails>> _cache
-        = new Dictionary<LocalStorageDevice, Task<LocalStorageDeviceDetails>>();
-
     public async Task<IEnumerable<LocalStorageDevice>> GetAllLocalStorageDevicesAsync()
     {
 
@@ -89,59 +86,5 @@ public class LocalStorageDeviceService : ILocalStorageDeviceService
 
 
 
-    private void StartWin32USBControllerDeviceMonitoring()
-    {
-        WqlEventQuery query;
-        ManagementEventWatcher watcher;
-
-        // Bind to local machine
-        ConnectionOptions opt = new ConnectionOptions
-        {
-            EnablePrivileges = true
-        };
-        ManagementScope scope = new ManagementScope("root\\CIMV2", opt);
-
-        try
-        {
-            query = new WqlEventQuery("__InstanceOperationEvent", new TimeSpan(0, 0, 1), "TargetInstance isa 'Win32_USBControllerdevice'");
-            watcher = new ManagementEventWatcher(scope, query);
-            watcher.EventArrived += new EventArrivedEventHandler(USBChanged);
-            watcher.Start();
-        }
-        catch (Exception e)
-        {
-            Console.WriteLine("Exception: " + e.Message);
-            return;
-        }
-
-        Console.WriteLine("Waiting for an event...");
-
-    }
-
-    static void USBChanged(object sender, EventArrivedEventArgs e)
-    {
-        // Get the Event object and display it
-        PropertyData pd = e.NewEvent.Properties["EventType"];
-        ManagementBaseObject instance = (ManagementBaseObject)e.NewEvent["TargetInstance"];
-        foreach (var property in instance.Properties)
-        {
-            if (property.Name == "Dependent")
-            {
-                // Parse the antecedent physical device id
-                string antecedent = property.Value.ToString().Split('=')[1].Replace("\"", "");
-
-                // Query the device using the device id
-                ManagementObjectSearcher searcher = new ManagementObjectSearcher("SELECT * FROM Win32_DiskDrive WHERE PNPDeviceID = '" + antecedent + "'");
-                foreach (ManagementObject queryObj in searcher.Get())
-                {
-                    switch (Convert.ToInt16(pd.Value))
-                    {
-                        case 2: Console.WriteLine("A USB storage device has been inserted"); break;
-                        case 3: Console.WriteLine("A USB storage device has been removed"); break;
-                    }
-                }
-            }
-        }
-    }
 
 }
