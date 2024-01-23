@@ -28,10 +28,8 @@
             </VisualStateGroup>
         </VisualStateManager.VisualStateGroups>
 
-        <ScrollViewer
-            IsTabStop="True">
-            <StackPanel
-                x:Name="contentPanel">
+        <controls:DockPanel>
+            <StackPanel controls:DockPanel.Dock="Top" x:Name="contentPanel">
                 <RelativePanel>
                     <Grid
                         x:Name="itemHero"
@@ -44,11 +42,11 @@
                         RelativePanel.AlignTopWithPanel="True"
                         RelativePanel.AlignLeftWithPanel="True">
                         <FontIcon
-                            HorizontalAlignment="Center"
-                            VerticalAlignment="Center"
-                            FontSize="70"
-                            Glyph="{x:Bind ViewModel.Item.Symbol}"
-                            AutomationProperties.Name="{x:Bind ViewModel.Item.SymbolName}" />
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center"
+                        FontSize="70"
+                        Glyph="{x:Bind ViewModel.Item.Device.Symbol}"
+                        AutomationProperties.Name="{x:Bind ViewModel.Item.Device.SymbolName}" />
                     </Grid>
 
                     <TextBlock
@@ -57,79 +55,62 @@
                         RelativePanel.AlignTopWithPanel="True"
                         RelativePanel.RightOf="itemHero"
                         Style="{ThemeResource TitleTextBlockStyle}"
-                        Text="{x:Bind ViewModel.Item.VolumeLabelAndName, Mode=OneWay}" />
-            
+                        Text="{x:Bind ViewModel.Item.Device.VolumeLabelAndName, Mode=OneWay}" />
 
                     <StackPanel x:Name="propertiesGroup1" RelativePanel.Below="itemHero">
                         <StackPanel x:Name="driveTypeGroup" Margin="{StaticResource SmallTopMargin}">
                             <TextBlock Style="{ThemeResource SubtitleTextBlockStyle}" Text="Drive type" />
-                            <TextBlock Style="{ThemeResource BodyTextBlockStyle}" Text="{x:Bind ViewModel.Item.DriveType}" />
+                            <TextBlock Style="{ThemeResource BodyTextBlockStyle}" Text="{x:Bind ViewModel.Item.Device.DriveType}" />
                         </StackPanel>
 
-                         <StackPanel x:Name="driveFormatGroup" Margin="{StaticResource SmallTopMargin}">
+                        <StackPanel x:Name="driveFormatGroup" Margin="{StaticResource SmallTopMargin}">
                             <TextBlock Style="{ThemeResource SubtitleTextBlockStyle}" Text="Drive format" />
-                            <TextBlock Style="{ThemeResource BodyTextBlockStyle}" Text="{x:Bind ViewModel.Item.DriveFormat}" />
+                            <TextBlock Style="{ThemeResource BodyTextBlockStyle}" Text="{x:Bind ViewModel.Item.Device.DriveFormat}" />
                         </StackPanel>
 
                         <StackPanel x:Name="volumeLabelGroup" Margin="{StaticResource SmallTopMargin}">
                             <TextBlock Style="{ThemeResource SubtitleTextBlockStyle}" Text="Volume label" />
-                            <TextBlock Style="{ThemeResource BodyTextBlockStyle}" Text="{x:Bind ViewModel.Item.VolumeLabel}" />
+                            <TextBlock Style="{ThemeResource BodyTextBlockStyle}" Text="{x:Bind ViewModel.Item.Device.VolumeLabel}" />
                         </StackPanel>
                     </StackPanel>
 
                     <StackPanel x:Name="propertiesGroup2" RelativePanel.Below="propertiesGroup1">
                         <StackPanel x:Name="totalSizeGroup" Margin="{StaticResource SmallTopMargin}">
                             <TextBlock Style="{ThemeResource SubtitleTextBlockStyle}" Text="Total size" />
-                            <TextBlock Style="{ThemeResource BodyTextBlockStyle}" Text="{x:Bind ViewModel.Item.TotalSizeFormatted}" />
+                            <TextBlock Style="{ThemeResource BodyTextBlockStyle}" Text="{x:Bind ViewModel.Item.Device.TotalSizeFormatted}" />
                         </StackPanel>
 
                         <StackPanel x:Name="totalFreeSpacegroup" Margin="{StaticResource SmallTopMargin}">
                             <TextBlock Style="{ThemeResource SubtitleTextBlockStyle}" Text="Total free space" />
-                            <TextBlock Style="{ThemeResource BodyTextBlockStyle}" Text="{x:Bind ViewModel.Item.TotalFreeSpaceFormatted}" />
+                            <TextBlock Style="{ThemeResource BodyTextBlockStyle}" Text="{x:Bind ViewModel.Item.Device.TotalFreeSpaceFormatted}" />
                         </StackPanel>
 
                         <StackPanel x:Name="availableFreeSpaceGroup" Margin="{StaticResource SmallTopMargin}">
                             <TextBlock Style="{ThemeResource SubtitleTextBlockStyle}" Text="Available free space" />
-                            <TextBlock Style="{ThemeResource BodyTextBlockStyle}" Text="{x:Bind ViewModel.Item.AvailableFreeSpaceFormatted}" />
+                            <TextBlock Style="{ThemeResource BodyTextBlockStyle}" Text="{x:Bind ViewModel.Item.Device.AvailableFreeSpaceFormatted}" />
                         </StackPanel>
                     </StackPanel>
-                    
+
                     <TextBlock
                         x:Name="analysis"
                         RelativePanel.Below="propertiesGroup2"
                         Style="{ThemeResource TitleTextBlockStyle}"
                         Text="Drive Analysis" />
-
-                    <controls:DataGrid RelativePanel.Below="analysis"
-                        AutoGenerateColumns="True"
-                        GridLinesVisibility="Horizontal"
-                        ItemsSource="{x:Bind ViewModel.Item.Details.MimeTypeDetails, Mode=OneWay}">
-                        <controls:DataGrid.Resources>
-                            <SolidColorBrush x:Key="DataGridColumnHeaderBackgroundColor" Color="Transparent" />
-                        </controls:DataGrid.Resources>
-
-                    </controls:DataGrid>
-
                 </RelativePanel>
-
-                <!--<TextBlock
-                    Margin="{StaticResource SmallTopMargin}"
-                    Style="{ThemeResource SubtitleTextBlockStyle}"
-                    Text="Note 1" />
-                <TextBlock
-                    Style="{ThemeResource BodyTextBlockStyle}"
-                    Text="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis quis hendrerit nulla, vel molestie libero. In nec ultricies magna, ultricies molestie ipsum. Mauris non dignissim velit. Etiam malesuada blandit mauris eu maximus. Quisque ornare, felis nec scelerisque mollis, risus dolor posuere magna, in gravida quam mi id nisi. Nullam mattis consequat ex. Cras nulla neque, dictum ac urna et, vestibulum feugiat ex. Pellentesque malesuada accumsan ligula, vel fringilla lacus facilisis sit amet. Proin convallis tempor arcu, ac placerat libero pretium ut. Praesent hendrerit nisl at lobortis viverra. Fusce vitae velit odio. Nam ut tortor sed purus finibus sollicitudin quis at ante. Ut sodales dolor vel eros mollis suscipit. Donec eu nulla id urna ultricies consequat. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae;" />
-
-                <TextBlock
-                    Margin="{StaticResource SmallTopMargin}"
-                    Style="{ThemeResource SubtitleTextBlockStyle}"
-                    Text="Note 2" />
-                <TextBlock
-                    Margin="{StaticResource MediumBottomMargin}"
-                    Style="{ThemeResource BodyTextBlockStyle}"
-                    Text="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis quis hendrerit nulla, vel molestie libero. In nec ultricies magna, ultricies molestie ipsum. Mauris non dignissim velit. Etiam malesuada blandit mauris eu maximus. Quisque ornare, felis nec scelerisque mollis, risus dolor posuere magna, in gravida quam mi id nisi. Nullam mattis consequat ex. Cras nulla neque, dictum ac urna et, vestibulum feugiat ex. Pellentesque malesuada accumsan ligula, vel fringilla lacus facilisis sit amet. Proin convallis tempor arcu, ac placerat libero pretium ut. Praesent hendrerit nisl at lobortis viverra. Fusce vitae velit odio. Nam ut tortor sed purus finibus sollicitudin quis at ante. Ut sodales dolor vel eros mollis suscipit. Donec eu nulla id urna ultricies consequat. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae;" />-->
-            
             </StackPanel>
-        </ScrollViewer>
+            
+            <ScrollViewer
+            IsTabStop="True">
+                <controls:DataGrid 
+                    AutoGenerateColumns="True"
+                    GridLinesVisibility="Horizontal"
+                    ItemsSource="{x:Bind ViewModel.Item.Details.MimeTypeDetails, Mode=OneWay}">
+                    <controls:DataGrid.Resources>
+                        <SolidColorBrush x:Key="DataGridColumnHeaderBackgroundColor" Color="Transparent" />
+                    </controls:DataGrid.Resources>
+                </controls:DataGrid>
+            </ScrollViewer>
+        </controls:DockPanel>
+        
     </Grid>
 </Page>

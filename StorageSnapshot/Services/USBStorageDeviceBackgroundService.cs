@@ -63,15 +63,6 @@ internal class USBStorageDeviceBackgroundService : BackgroundService
             }
         };
 
-        //insertWatcher.EventArrived += (sender, eventArgs) => {
-        //    var instance = (ManagementBaseObject)eventArgs.NewEvent["TargetInstance"];
-        //    System.Diagnostics.Debug.WriteLine($"USB device inserted: {instance["Name"]}");
-
-        //    // Send a message from some other module
-        //    var message = new UsbDeviceAddedMessage { DeviceId = "SomeDeviceId" };
-        //    WeakReferenceMessenger.Default.Send(message);
-
-        //};
         insertWatcher.Start();
 
         // Watcher for USB removal
@@ -95,13 +86,7 @@ internal class USBStorageDeviceBackgroundService : BackgroundService
             var message = new UsbDeviceRemovedMessage { DeviceId = "SomeDeviceId" };
             WeakReferenceMessenger.Default.Send(message);
         };
-        //removeWatcher.EventArrived += (sender, eventArgs) => {
-        //    var instance = (ManagementBaseObject)eventArgs.NewEvent["TargetInstance"];
-        //    System.Diagnostics.Debug.WriteLine($"USB device removed: {instance["Name"]}");
 
-        //    var message = new UsbDeviceRemovedMessage { DeviceId = "SomeDeviceId" };
-        //    WeakReferenceMessenger.Default.Send(message);
-        //};
         removeWatcher.Start();
     }
 

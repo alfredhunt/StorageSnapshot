@@ -8,32 +8,46 @@ using StorageSnapshot.Contracts.Services;
 using StorageSnapshot.Contracts.ViewModels;
 using StorageSnapshot.Core.Contracts.Services;
 using StorageSnapshot.Core.Models;
+using StorageSnapshot.Core.Services;
 
 namespace StorageSnapshot.ViewModels;
 
 public partial class ContentGridViewModel : ObservableRecipient, INavigationAware
 {
     private readonly INavigationService _navigationService;
-    private readonly ILocalStorageDeviceService _storageDeviceService;
+    private readonly ILocalStorageDeviceService _localStorageDeviceService;
 
-    public ObservableCollection<LocalStorageDevice> Source { get; } = new ObservableCollection<LocalStorageDevice>();
+    public ObservableCollection<LocalStorageDeviceViewModel> LocalStorageDevices { get; } = new ObservableCollection<LocalStorageDeviceViewModel>();
 
-    public ContentGridViewModel(INavigationService navigationService, ILocalStorageDeviceService storageDeviceService)
+    public ContentGridViewModel(INavigationService navigationService, ILocalStorageDeviceService localStorageDeviceService)
     {
         _navigationService = navigationService;
-        _storageDeviceService = storageDeviceService;
+        _localStorageDeviceService = localStorageDeviceService;
     }
 
     public async void OnNavigatedTo(object parameter)
     {
-        Source.Clear();
+        var tasks = new List<Task>();
+        LocalStorageDevices.Clear();
 
-        // TODO: Replace with real data.
-        var data = await _storageDeviceService.GetAllLocalStorageDevicesAsync();
-        foreach (var item in data)
+        var data = await _localStorageDeviceService.GetAllLocalStorageDevicesAsync();
+
+        foreach (var localStorageDevice in data)
         {
-            Source.Add(item);
+            var vm = new LocalStorageDeviceViewModel(localStorageDevice);
+            LocalStorageDevices.Add(vm);
+
+            var task = Task.Run(() => {
+                App.MainWindow.DispatcherQueue.TryEnqueue(async () =>
+                {
+                    vm.Details = await _localStorageDeviceService.GetLocalStorageDeviceDetailsAsync(localStorageDevice);
+                });
+                return Task.CompletedTask;
+            });
+            tasks.Add(task);
         }
+        await Task.WhenAll(tasks);
+        System.Diagnostics.Debug.WriteLine("ContentGridViewModel::OnNavigatedTo Finished");
     }
 
     public void OnNavigatedFrom()
@@ -41,12 +55,12 @@ public partial class ContentGridViewModel : ObservableRecipient, INavigationAwar
     }
 
     [RelayCommand]
-    private void OnItemClick(LocalStorageDevice? clickedItem)
+    private void OnItemClick(LocalStorageDeviceViewModel? clickedItem)
     {
         if (clickedItem != null)
         {
             _navigationService.SetListDataItemForNextConnectedAnimation(clickedItem);
-            _navigationService.NavigateTo(typeof(ContentGridDetailViewModel).FullName!, clickedItem.Name);
+            _navigationService.NavigateTo(typeof(ContentGridDetailViewModel).FullName!, clickedItem);
         }
     }
 }

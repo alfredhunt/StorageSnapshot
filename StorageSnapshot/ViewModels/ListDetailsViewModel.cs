@@ -1,38 +1,50 @@
 ﻿using System.Collections.ObjectModel;
 
 using CommunityToolkit.Mvvm.ComponentModel;
-
+using StorageSnapshot.Contracts.Services;
 using StorageSnapshot.Contracts.ViewModels;
 using StorageSnapshot.Core.Contracts.Services;
-using StorageSnapshot.Core.Models;
+using StorageSnapshot.Core.Services;
 
 namespace StorageSnapshot.ViewModels;
 
 public partial class ListDetailsViewModel : ObservableRecipient, INavigationAware
 {
-    private readonly ILocalStorageDeviceService _storageDeviceService;
+    private readonly ILocalStorageDeviceService _localStorageDeviceService;
 
     [ObservableProperty]
-    private LocalStorageDevice? selected;
+    private LocalStorageDeviceViewModel? selected;
 
-    public ObservableCollection<LocalStorageDevice> LocalStorageDevices { get; private set; } = new ObservableCollection<LocalStorageDevice>();
+    public ObservableCollection<LocalStorageDeviceViewModel> LocalStorageDevices { get; private set; } = new ObservableCollection<LocalStorageDeviceViewModel>();
 
-    public ListDetailsViewModel(ILocalStorageDeviceService storageDeviceService)
+    public ListDetailsViewModel(ILocalStorageDeviceService localStorageDeviceService)
     {
-        _storageDeviceService = storageDeviceService;
+        _localStorageDeviceService = localStorageDeviceService;
     }
 
     public async void OnNavigatedTo(object parameter)
     {
+        var tasks = new List<Task>();
         LocalStorageDevices.Clear();
 
-        // TODO: Replace with real data.
-        var data = await _storageDeviceService.GetAllLocalStorageDevicesAsync();
+        var data = await _localStorageDeviceService.GetAllLocalStorageDevicesAsync();
 
-        foreach (var item in data)
+        foreach (var localStorageDevice in data)
         {
-            LocalStorageDevices.Add(item);
+            var vm = new LocalStorageDeviceViewModel(localStorageDevice);
+            LocalStorageDevices.Add(vm);
+
+            var task = Task.Run(() => {
+                App.MainWindow.DispatcherQueue.TryEnqueue(async () =>
+                    {
+                        vm.Details = await _localStorageDeviceService.GetLocalStorageDeviceDetailsAsync(localStorageDevice);
+                    });
+                return Task.CompletedTask;
+            });
+            tasks.Add(task);
         }
+        await Task.WhenAll(tasks);
+        System.Diagnostics.Debug.WriteLine("ListDetailsViewModel::OnNavigatedTo Finished");
     }
 
     public void OnNavigatedFrom()

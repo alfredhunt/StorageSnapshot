@@ -1,6 +1,8 @@
 ﻿using System;
 using System.IO;
 using System.Management;
+using System.Runtime.CompilerServices;
+using System.Threading;
 using StorageSnapshot.Core.Contracts.Services;
 using StorageSnapshot.Core.Helpers;
 using StorageSnapshot.Core.Models;
@@ -10,9 +12,29 @@ public class LocalStorageDeviceService : ILocalStorageDeviceService
 {
     private List<LocalStorageDevice> _allStorageDeviceInfos;
 
+    private readonly Dictionary<LocalStorageDevice, Task<LocalStorageDeviceDetails>> _localStorageDeviceDetailsTasks = new();
+
+    public async Task Initialize()
+    {
+        // Create a list to store the tasks
+        var tasks = new List<Task>();
+
+        var localStorageDevices = await GetAllLocalStorageDevicesAsync();
+
+        foreach (var localStorageDevice in localStorageDevices)
+        {
+            // Create a task for each device to cache the details
+            var task = GetLocalStorageDeviceDetailsAsync(localStorageDevice);
+            tasks.Add(task);
+        }
+
+        // Wait for all tasks to complete
+        await Task.WhenAll(tasks);
+        System.Diagnostics.Debug.WriteLine("LocalStorageDeviceService Initialized");
+    }
+
     public async Task<IEnumerable<LocalStorageDevice>> GetAllLocalStorageDevicesAsync()
     {
-
         _allStorageDeviceInfos ??= new List<LocalStorageDevice>(GetDriveInfo());
 
         await Task.CompletedTask;
@@ -24,20 +46,24 @@ public class LocalStorageDeviceService : ILocalStorageDeviceService
         return DriveInfo.GetDrives().Select(x => new LocalStorageDevice(x));
     }
 
-    public async Task GetLocalStorageDeviceDetailsAsync(LocalStorageDevice localStorageDevice)
+    public async Task<LocalStorageDeviceDetails> GetLocalStorageDeviceDetailsAsync(LocalStorageDevice localStorageDevice)
     {
-        await Task.Run(() =>
+        if (!_localStorageDeviceDetailsTasks.ContainsKey(localStorageDevice))
         {
-            System.Diagnostics.Stopwatch stopwatch = new System.Diagnostics.Stopwatch();
-            stopwatch.Start();
-            System.Diagnostics.Debug.WriteLine($"Getting details for: {localStorageDevice.Name}");
-            GetLocalStorageDeviceDetails(localStorageDevice.RootDirectory, localStorageDevice.Details);
-            stopwatch.Stop();
-            TimeSpan duration = stopwatch.Elapsed;
-            System.Diagnostics.Debug.WriteLine($"Task completed for {localStorageDevice.Name} in {duration.TotalMilliseconds} milliseconds.");
+            _localStorageDeviceDetailsTasks[localStorageDevice] = GetLocalStorageDeviceDetailsAsyncInternal(localStorageDevice);
+        }
+
+        return await _localStorageDeviceDetailsTasks[localStorageDevice];
+    }
+
+    private Task<LocalStorageDeviceDetails> GetLocalStorageDeviceDetailsAsyncInternal(LocalStorageDevice localStorageDevice)
+    {
+        return Task.Run(() =>
+        {
+            LocalStorageDeviceDetails localStorageDeviceDetails = new LocalStorageDeviceDetails();
+            GetLocalStorageDeviceDetails(localStorageDevice.RootDirectory, localStorageDeviceDetails);
+            return localStorageDeviceDetails;
         });
-
-
     }
 
     private void GetLocalStorageDeviceDetails(DirectoryInfo rootDirectory, LocalStorageDeviceDetails localStorageDeviceDetails)
@@ -46,7 +72,6 @@ public class LocalStorageDeviceService : ILocalStorageDeviceService
         {
             foreach (FileInfo file in rootDirectory.EnumerateFiles())
             {
-                Console.WriteLine($"File: {file.FullName}");
                 localStorageDeviceDetails.TotalFiles++;
 
                 var mimeType = MimeTypeResolver.GetMimeType(file);
@@ -55,29 +80,19 @@ public class LocalStorageDeviceService : ILocalStorageDeviceService
                     localStorageDeviceDetails.MimeTypeDetailsDictionary.Add(mimeType, new MimeTypeDetails(file.Extension, mimeType));
                 }
                 localStorageDeviceDetails.MimeTypeDetailsDictionary[mimeType].TotalFiles++;
-                localStorageDeviceDetails.MimeTypeDetailsDictionary[mimeType].TotalSize+= file.Length;
-
+                localStorageDeviceDetails.MimeTypeDetailsDictionary[mimeType].TotalSize += file.Length;
             }
 
             foreach (DirectoryInfo directoryInfo in rootDirectory.EnumerateDirectories())
             {
-                Console.WriteLine($"Directory: {directoryInfo.FullName}");
                 localStorageDeviceDetails.TotalDirectories++;
-
-                //// Check if the directory is a protected system directory
-                //if ((directoryInfo.Attributes & FileAttributes.System) == FileAttributes.System)
-                //{
-                //    System.Diagnostics.Debug.WriteLine($"This directory is a protected system directory. {directoryInfo.FullName}");
-                //    continue;
-                //}
 
                 GetLocalStorageDeviceDetails(directoryInfo, localStorageDeviceDetails);
             }
         }
-        catch (UnauthorizedAccessException ex)
+        catch (UnauthorizedAccessException)
         {
             // Catch and ignore this exception if we don't have access to the directory
-            System.Diagnostics.Debug.WriteLine(ex.Message);
         }
     }
 

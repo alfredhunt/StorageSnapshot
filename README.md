@@ -21,7 +21,8 @@ StorageSnapshot is built on WinUI 3. The application can be side loaded by downl
 
 ### Installing
 
-- Download the latest MSIX installer from the [releases](https://github.com/alfredhunt/StorageSnapshot/releases) page.
+- Download the latest MSIX installer from the [releases](https://github.com/alfredhunt/StorageSnapshot/releases) page. 
+- You will need to install the certificate in the bundle to be able to side load the application.
 
 ### Executing Program
 
@@ -29,7 +30,7 @@ StorageSnapshot is built on WinUI 3. The application can be side loaded by downl
 
 ## Authors
 
-[Alfred Hunt](https://alfredhunt.github.io)
+[Alfred Hunt](https://alfredhunt.dev)
 
 ## Version History
 

@@ -5,13 +5,17 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:controls="using:CommunityToolkit.WinUI.UI.Controls"
-    xmlns:models="using:StorageSnapshot.Core.Models"
+    xmlns:viewmodels="using:StorageSnapshot.ViewModels"
     xmlns:views="using:StorageSnapshot.Views"
-    xmlns:behaviors="using:StorageSnapshot.Behaviors"
+    xmlns:behaviors="using:StorageSnapshot.Behaviors" 
+    xmlns:converters="using:CommunityToolkit.WinUI.UI.Converters"
     behaviors:NavigationViewHeaderBehavior.HeaderMode="Never"
     mc:Ignorable="d">
     <Page.Resources>
-        <DataTemplate x:Key="ItemTemplate" x:DataType="models:LocalStorageDevice">
+
+        <converters:BoolToObjectConverter x:Key="BoolToVisibilityConverter" TrueValue="Visible" FalseValue="Collapsed"/>
+
+        <DataTemplate x:Key="ItemTemplate" x:DataType="viewmodels:LocalStorageDeviceViewModel">
             <Grid Height="70">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto" />
@@ -21,15 +25,15 @@
                     Grid.Column="0"
                     VerticalAlignment="Center"
                     FontSize="32"
-                    Glyph="{x:Bind Symbol}"
-                    AutomationProperties.Name="{x:Bind SymbolName}" />
+                    Glyph="{x:Bind Device.Symbol}"
+                    AutomationProperties.Name="{x:Bind Device.SymbolName}" />
                 <StackPanel
                     Grid.Column="1"
                     Margin="{StaticResource SmallLeftMargin}"
                     VerticalAlignment="Center">
-                    <TextBlock Text="{x:Bind VolumeLabelAndName}" Style="{StaticResource ListTitleStyle}" />
-                    <TextBlock Text="{x:Bind TotalFreeSpaceOfTotalSize}" Style="{StaticResource ListSubTitleStyle}" />
-                    <ProgressBar Maximum="100" Value="{x:Bind PercentageInUse}" Style="{StaticResource ProgressBarStyle}" />
+                    <TextBlock Text="{x:Bind Device.VolumeLabelAndName}" Style="{StaticResource ListTitleStyle}" />
+                    <TextBlock Text="{x:Bind Device.TotalFreeSpaceOfTotalSize}" Style="{StaticResource ListSubTitleStyle}" />
+                    <ProgressBar Maximum="100" Value="{x:Bind Device.PercentageInUse}" Style="{StaticResource ProgressBarStyle}" />
                 </StackPanel>
             </Grid>
         </DataTemplate>

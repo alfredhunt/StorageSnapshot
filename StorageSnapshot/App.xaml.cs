@@ -71,11 +71,9 @@ public partial class App : Application
             services.AddSingleton<INavigationService, NavigationService>();
 
             // Core Services
-            services.AddSingleton<ISampleDataService, SampleDataService>();
             services.AddSingleton<IFileService, FileService>();
             services.AddSingleton<ILocalStorageDeviceService, LocalStorageDeviceService>();
 
-            services.AddHostedService<LocalStorageDeviceBackgroundService>();
             services.AddHostedService<USBStorageDeviceBackgroundService>();
 
             // Views and ViewModels
@@ -126,7 +124,9 @@ public partial class App : Application
         App.GetService<IAppNotificationService>().Initialize();
 
         UnhandledException += App_UnhandledException;
-        
+
+        App.GetService<ILocalStorageDeviceService>().Initialize();
+
         Host.Start();
 
     }

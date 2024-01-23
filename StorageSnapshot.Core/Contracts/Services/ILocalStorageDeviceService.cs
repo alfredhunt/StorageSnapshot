@@ -8,7 +8,8 @@ using StorageSnapshot.Core.Models;
 namespace StorageSnapshot.Core.Contracts.Services;
 public interface ILocalStorageDeviceService
 {
+    Task Initialize();
     Task<IEnumerable<LocalStorageDevice>> GetAllLocalStorageDevicesAsync();
-    Task GetLocalStorageDeviceDetailsAsync(LocalStorageDevice localStorageDevice);
+    Task<LocalStorageDeviceDetails> GetLocalStorageDeviceDetailsAsync(LocalStorageDevice localStorageDevice1);
 
 }

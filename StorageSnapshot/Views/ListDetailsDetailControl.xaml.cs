@@ -2,18 +2,19 @@
 using Microsoft.UI.Xaml.Controls;
 
 using StorageSnapshot.Core.Models;
+using StorageSnapshot.ViewModels;
 
 namespace StorageSnapshot.Views;
 
 public sealed partial class ListDetailsDetailControl : UserControl
 {
-    public LocalStorageDevice? ListDetailsMenuItem
+    public LocalStorageDeviceViewModel? ListDetailsMenuItem
     {
-        get => GetValue(ListDetailsMenuItemProperty) as LocalStorageDevice;
+        get => GetValue(ListDetailsMenuItemProperty) as LocalStorageDeviceViewModel;
         set => SetValue(ListDetailsMenuItemProperty, value);
     }
 
-    public static readonly DependencyProperty ListDetailsMenuItemProperty = DependencyProperty.Register("ListDetailsMenuItem", typeof(LocalStorageDevice), typeof(ListDetailsDetailControl), new PropertyMetadata(null, OnListDetailsMenuItemPropertyChanged));
+    public static readonly DependencyProperty ListDetailsMenuItemProperty = DependencyProperty.Register("ListDetailsMenuItem", typeof(LocalStorageDeviceViewModel), typeof(ListDetailsDetailControl), new PropertyMetadata(null, OnListDetailsMenuItemPropertyChanged));
 
     public ListDetailsDetailControl()
     {

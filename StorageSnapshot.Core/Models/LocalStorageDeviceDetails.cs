@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace StorageSnapshot.Core.Models;
+
 public class LocalStorageDeviceDetails
 {
     public int TotalFiles
