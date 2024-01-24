@@ -24,27 +24,13 @@ public partial class ListDetailsViewModel : ObservableRecipient, INavigationAwar
 
     public async void OnNavigatedTo(object parameter)
     {
-        var tasks = new List<Task>();
         LocalStorageDevices.Clear();
-
         var data = await _localStorageDeviceService.GetAllLocalStorageDevicesAsync();
-
         foreach (var localStorageDevice in data)
         {
-            var vm = new LocalStorageDeviceViewModel(localStorageDevice);
+            var vm = new LocalStorageDeviceViewModel(_localStorageDeviceService, localStorageDevice);
             LocalStorageDevices.Add(vm);
-
-            var task = Task.Run(() => {
-                App.MainWindow.DispatcherQueue.TryEnqueue(async () =>
-                    {
-                        vm.Details = await _localStorageDeviceService.GetLocalStorageDeviceDetailsAsync(localStorageDevice);
-                    });
-                return Task.CompletedTask;
-            });
-            tasks.Add(task);
         }
-        await Task.WhenAll(tasks);
-        System.Diagnostics.Debug.WriteLine("ListDetailsViewModel::OnNavigatedTo Finished");
     }
 
     public void OnNavigatedFrom()

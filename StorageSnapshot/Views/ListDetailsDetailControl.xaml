@@ -89,11 +89,14 @@
                         </StackPanel>
                     </StackPanel>
 
-                    <TextBlock
-                        x:Name="analysis"
-                        RelativePanel.Below="propertiesGroup2"
-                        Style="{ThemeResource TitleTextBlockStyle}"
-                        Text="Drive Analysis" />
+                    <StackPanel x:Name="analysis" Orientation="Horizontal" RelativePanel.Below="propertiesGroup2">
+                        <TextBlock
+                            Style="{ThemeResource TitleTextBlockStyle}"
+                            Text="Drive Analysis" />
+                        <ProgressRing Margin="10,5" IsActive="{x:Bind ListDetailsMenuItem.IsLoading, Mode=OneWay}"
+                            Visibility="{x:Bind ListDetailsMenuItem.IsLoading, Converter={StaticResource BoolToVisibilityConverter}, Mode=OneWay}"/>
+                    </StackPanel>
+
                 </RelativePanel>
             </StackPanel>
 
@@ -108,9 +111,8 @@
                 </controls:DataGrid>
             </ScrollViewer>
 
-            <!--<ProgressRing IsActive="{x:Bind ListDetailsMenuItem.Details, Converter={StaticResource NullableToBooleanConverter}}" 
-              Visibility="{x:Bind ListDetailsMenuItem.Details, Converter={StaticResource NullableToInverseVisibilityConverter}}" />-->
-            
+
+
         </controls:DockPanel>
 
     </Grid>

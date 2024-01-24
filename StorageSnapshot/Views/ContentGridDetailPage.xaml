@@ -91,11 +91,16 @@
                         </StackPanel>
                     </StackPanel>
 
-                    <TextBlock
-                        x:Name="analysis"
-                        RelativePanel.Below="propertiesGroup2"
-                        Style="{ThemeResource TitleTextBlockStyle}"
-                        Text="Drive Analysis" />
+                    <StackPanel Orientation="Horizontal"
+                                x:Name="analysis"
+                                RelativePanel.Below="propertiesGroup2">
+                        <TextBlock                           
+                            Style="{ThemeResource TitleTextBlockStyle}"
+                            Text="Drive Analysis" />
+                        <ProgressRing Margin="10,5" IsActive="{x:Bind ViewModel.Item.IsLoading, Mode=OneWay}"
+                            Visibility="{x:Bind ViewModel.Item.IsLoading, Converter={StaticResource BoolToVisibilityConverter}, Mode=OneWay}"/>
+                    </StackPanel>
+                    
                 </RelativePanel>
             </StackPanel>
             

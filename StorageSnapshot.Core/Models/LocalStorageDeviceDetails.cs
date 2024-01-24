@@ -20,5 +20,4 @@ public class LocalStorageDeviceDetails
     }
     public Dictionary<string, MimeTypeDetails> MimeTypeDetailsDictionary { get; internal set; } = new Dictionary<string, MimeTypeDetails>();
 
-    public IEnumerable<MimeTypeDetails> MimeTypeDetails => MimeTypeDetailsDictionary.Values.ToList();
 }

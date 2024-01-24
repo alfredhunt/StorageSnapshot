@@ -24,17 +24,8 @@ public partial class ContentGridDetailViewModel : ObservableRecipient, INavigati
         if (parameter is LocalStorageDeviceViewModel vm)
         {
             Item = vm;
-            App.MainWindow.DispatcherQueue.TryEnqueue(async () =>
-            {
-                vm.Details = await _localStorageDeviceService.GetLocalStorageDeviceDetailsAsync(vm.Device);
-            });
             return;
         }
-        //if (parameter is string name)
-        //{
-        //    var data = await _storageDeviceService.GetAllLocalStorageDevicesAsync();
-        //    Item = data.First(i => i.Name == name);
-        //}
     }
 
     public void OnNavigatedFrom()

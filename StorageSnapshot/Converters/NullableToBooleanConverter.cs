@@ -8,6 +8,7 @@ public class NullableToBooleanConverter : IValueConverter
 {
     public object Convert(object value, Type targetType, object parameter, string language)
     {
+        System.Diagnostics.Debug.WriteLine($"NullableToBooleanConverter::Convert {value}");
         return value != null ? false : true;
     }
 
