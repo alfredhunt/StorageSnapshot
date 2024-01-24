@@ -4,7 +4,7 @@ using StorageSnapshot.ViewModels;
 
 namespace StorageSnapshot.Views;
 
-// TODO: Set the URL for your privacy policy by updating SettingsPage_PrivacyTermsLink.NavigateUri in Resources.resw.
+// TODO: Set the URL for your privacy policy by updating SettingsPage_ProjectLink.NavigateUri in Resources.resw.
 public sealed partial class SettingsPage : Page
 {
     public SettingsViewModel ViewModel

@@ -31,7 +31,8 @@
                     Grid.Column="1"
                     Margin="{StaticResource SmallLeftMargin}"
                     VerticalAlignment="Center">
-                    <TextBlock Text="{x:Bind Device.VolumeLabelAndName}" Style="{StaticResource ListTitleStyle}" />
+                    <TextBlock x:Name="labelAndNameTextBox" Text="{x:Bind Device.VolumeLabelAndName}" 
+                                Style="{StaticResource ListTitleStyle}" />
                     <TextBlock Text="{x:Bind Device.TotalFreeSpaceOfTotalSize}" Style="{StaticResource ListSubTitleStyle}" />
                     <ProgressBar Maximum="100" Value="{x:Bind Device.PercentageInUse}" Style="{StaticResource ProgressBarStyle}" />
                 </StackPanel>

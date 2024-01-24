@@ -57,6 +57,13 @@
                         Style="{ThemeResource TitleTextBlockStyle}"
                         Text="{x:Bind ViewModel.Item.Device.VolumeLabelAndName, Mode=OneWay}" />
 
+                    <ProgressRing x:Name="progressRing1" 
+                                  Margin="{StaticResource XXSmallTopMargin}"
+                                  RelativePanel.AlignTopWithPanel="True"
+                                  RelativePanel.RightOf="title" 
+                                  IsActive="{x:Bind ViewModel.Item.IsLoading, Mode=OneWay}"
+                                  Visibility="{x:Bind ViewModel.Item.IsLoading, Converter={StaticResource BoolToVisibilityConverter}, Mode=OneWay}"/>
+
                     <StackPanel x:Name="propertiesGroup1" RelativePanel.Below="itemHero">
                         <StackPanel x:Name="driveTypeGroup" Margin="{StaticResource SmallTopMargin}">
                             <TextBlock Style="{ThemeResource SubtitleTextBlockStyle}" Text="Drive type" />
@@ -94,28 +101,26 @@
                     <StackPanel Orientation="Horizontal"
                                 x:Name="analysis"
                                 RelativePanel.Below="propertiesGroup2">
-                        <TextBlock                           
-                            Style="{ThemeResource TitleTextBlockStyle}"
-                            Text="Drive Analysis" />
+                        <TextBlock Style="{ThemeResource TitleTextBlockStyle}"
+                                   Text="Drive Analysis" />
                         <ProgressRing Margin="10,5" IsActive="{x:Bind ViewModel.Item.IsLoading, Mode=OneWay}"
-                            Visibility="{x:Bind ViewModel.Item.IsLoading, Converter={StaticResource BoolToVisibilityConverter}, Mode=OneWay}"/>
+                                      Visibility="{x:Bind ViewModel.Item.IsLoading, Converter={StaticResource BoolToVisibilityConverter}, Mode=OneWay}"/>
                     </StackPanel>
-                    
+
                 </RelativePanel>
             </StackPanel>
-            
-            <ScrollViewer
-            IsTabStop="True">
-                <controls:DataGrid 
-                    AutoGenerateColumns="True"
-                    GridLinesVisibility="Horizontal"
-                    ItemsSource="{x:Bind ViewModel.Item.Details.MimeTypeDetails, Mode=OneWay}">
+
+            <ScrollViewer IsTabStop="True">
+                <controls:DataGrid AutoGenerateColumns="True"
+                                   GridLinesVisibility="Horizontal"
+                                   ItemsSource="{x:Bind ViewModel.Item.Details.MimeTypeDetails, Mode=OneWay}">
                     <controls:DataGrid.Resources>
                         <SolidColorBrush x:Key="DataGridColumnHeaderBackgroundColor" Color="Transparent" />
                     </controls:DataGrid.Resources>
                 </controls:DataGrid>
             </ScrollViewer>
+
         </controls:DockPanel>
-        
+
     </Grid>
 </Page>

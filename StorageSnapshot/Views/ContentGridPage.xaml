@@ -22,9 +22,8 @@
             StretchContentForSingleRow="False">
             <controls:AdaptiveGridView.ItemTemplate>
                 <DataTemplate x:DataType="viewmodels:LocalStorageDeviceViewModel">
-                    <Grid
-                        x:Name="itemThumbnail"
-                        Padding="{StaticResource XSmallLeftTopRightBottomMargin}">
+                    <Grid x:Name="itemThumbnail"
+                          Padding="{StaticResource XSmallLeftTopRightBottomMargin}">
                         <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
                             <FontIcon
                                 Glyph="{x:Bind Device.Symbol}"
