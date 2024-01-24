@@ -28,11 +28,12 @@ public partial class ContentGridViewModel : ObservableRecipient, INavigationAwar
     public async void OnNavigatedTo(object parameter)
     {
         LocalStorageDevices.Clear();
-        var data = await _localStorageDeviceService.GetAllLocalStorageDevicesAsync();
+        var data = await _localStorageDeviceService.GetLocalStorageDevicesAsync();
         foreach (var localStorageDevice in data)
         {
             var vm = new LocalStorageDeviceViewModel(_localStorageDeviceService, localStorageDevice);
             LocalStorageDevices.Add(vm);
+            _ = vm.LoadDetailsAsync();
         }
     }
 

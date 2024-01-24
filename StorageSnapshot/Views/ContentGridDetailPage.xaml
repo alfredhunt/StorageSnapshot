@@ -111,12 +111,18 @@
             </StackPanel>
 
             <ScrollViewer IsTabStop="True">
-                <controls:DataGrid AutoGenerateColumns="True"
+                <controls:DataGrid AutoGenerateColumns="False"
                                    GridLinesVisibility="Horizontal"
                                    ItemsSource="{x:Bind ViewModel.Item.Details.MimeTypeDetails, Mode=OneWay}">
                     <controls:DataGrid.Resources>
                         <SolidColorBrush x:Key="DataGridColumnHeaderBackgroundColor" Color="Transparent" />
                     </controls:DataGrid.Resources>
+                    <controls:DataGrid.Columns>
+                        <controls:DataGridTextColumn Binding="{Binding Extension}" Header="File Extension" />
+                        <controls:DataGridTextColumn Binding="{Binding TotalFiles}" Header="Number of files" />
+                        <controls:DataGridTextColumn Binding="{Binding TotalSizeFormatted}" Header="Size on disk" />
+                        <controls:DataGridTextColumn Binding="{Binding MimeType}" Header="MimeType" />
+                    </controls:DataGrid.Columns>
                 </controls:DataGrid>
             </ScrollViewer>
 

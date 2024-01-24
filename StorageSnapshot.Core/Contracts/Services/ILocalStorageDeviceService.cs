@@ -9,7 +9,7 @@ namespace StorageSnapshot.Core.Contracts.Services;
 public interface ILocalStorageDeviceService
 {
     Task Initialize();
-    Task<IEnumerable<LocalStorageDevice>> GetAllLocalStorageDevicesAsync();
+    Task<IEnumerable<LocalStorageDevice>> GetLocalStorageDevicesAsync();
     Task<LocalStorageDeviceDetails> GetLocalStorageDeviceDetailsAsync(LocalStorageDevice localStorageDevice1);
 
 }

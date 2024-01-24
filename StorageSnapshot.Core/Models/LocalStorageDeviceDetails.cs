@@ -8,12 +8,12 @@ namespace StorageSnapshot.Core.Models;
 
 public class LocalStorageDeviceDetails
 {
-    public int TotalFiles
+    public long TotalFiles
     {
         get;
         internal set;
     }
-    public int TotalDirectories
+    public long TotalDirectories
     {
         get;
         internal set;

@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -13,7 +12,7 @@ namespace StorageSnapshot.ViewModels;
 public partial class LocalStorageDeviceViewModel : ObservableRecipient
 {
     [ObservableProperty]
-    private LocalStorageDevice? device = null;
+    private LocalStorageDevice device = null;
 
     [ObservableProperty]
     private LocalStorageDeviceDetailsViewModel? details = null;
@@ -27,33 +26,14 @@ public partial class LocalStorageDeviceViewModel : ObservableRecipient
     {
         _localStorageDeviceService = localStorageDeviceService;
         Device = localStorageDevice;
-        LoadDetailsAsync();
     }
 
-    public async void LoadDetailsAsync()
+    public async Task<LocalStorageDeviceDetails> LoadDetailsAsync()
     {
         IsLoading = true;
         var details = await _localStorageDeviceService.GetLocalStorageDeviceDetailsAsync(Device);
         Details = new LocalStorageDeviceDetailsViewModel(details);
         IsLoading = false;
-    }
-}
-
-public partial class LocalStorageDeviceDetailsViewModel : ObservableRecipient
-{
-    [ObservableProperty]
-    private int totalFiles;
-
-    [ObservableProperty]
-    private int totalDirectories;
-
-    [ObservableProperty]
-    private ObservableCollection<MimeTypeDetails>? mimeTypeDetails = null;
-
-    public LocalStorageDeviceDetailsViewModel(LocalStorageDeviceDetails item)
-    {
-        TotalFiles = item.TotalFiles;
-        TotalDirectories = item.TotalDirectories;
-        MimeTypeDetails = new ObservableCollection<MimeTypeDetails>(item.MimeTypeDetailsDictionary.Values);
+        return details;
     }
 }

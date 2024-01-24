@@ -19,7 +19,7 @@ public class LocalStorageDeviceService : ILocalStorageDeviceService
         // Create a list to store the tasks
         var tasks = new List<Task>();
 
-        var localStorageDevices = await GetAllLocalStorageDevicesAsync();
+        var localStorageDevices = await GetLocalStorageDevicesAsync();
 
         foreach (var localStorageDevice in localStorageDevices)
         {
@@ -33,7 +33,7 @@ public class LocalStorageDeviceService : ILocalStorageDeviceService
         System.Diagnostics.Debug.WriteLine("LocalStorageDeviceService Initialized");
     }
 
-    public async Task<IEnumerable<LocalStorageDevice>> GetAllLocalStorageDevicesAsync()
+    public async Task<IEnumerable<LocalStorageDevice>> GetLocalStorageDevicesAsync()
     {
         _allStorageDeviceInfos ??= new List<LocalStorageDevice>(GetDriveInfo());
 

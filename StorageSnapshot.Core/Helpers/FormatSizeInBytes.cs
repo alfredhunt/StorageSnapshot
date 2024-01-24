@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace StorageSnapshot.Core.Helpers;
-internal class FormatSizeInBytes
+public class FormatSizeInBytes
 {
     public static string FormatByteSize(long bytes)
     {

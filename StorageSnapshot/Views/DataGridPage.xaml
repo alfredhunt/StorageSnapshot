@@ -7,25 +7,52 @@
     xmlns:controls="using:CommunityToolkit.WinUI.UI.Controls"
     mc:Ignorable="d">
 
-    <Grid x:Name="ContentArea">
+    <RelativePanel x:Name="ContentArea">
         <controls:DataGrid
+            x:Name="dataGrid"
             AutoGenerateColumns="False"
             GridLinesVisibility="Horizontal"
-            ItemsSource="{x:Bind ViewModel.Source, Mode=OneWay}">
+            ItemsSource="{x:Bind ViewModel.LocalStorageDevices, Mode=OneWay}">
             <controls:DataGrid.Resources>
                 <SolidColorBrush x:Key="DataGridColumnHeaderBackgroundColor" Color="Transparent" />
             </controls:DataGrid.Resources>
             <controls:DataGrid.Columns>
-                <!-- TODO: Replace column definitions to match real data. Consider adding Header values to Resources.resw. -->
-                <controls:DataGridTextColumn Binding="{Binding Name}" Header="Drive" />
-                <controls:DataGridTextColumn Binding="{Binding VolumeLabel}" Header="Volume Label" />
-                <controls:DataGridTextColumn Binding="{Binding DriveType}" Header="DriveType" />
-                <controls:DataGridTextColumn Binding="{Binding IsReady}" Header="IsReady" />
-                <controls:DataGridTextColumn Binding="{Binding DriveFormat}" Header="DriveFormat" />
-                <controls:DataGridTextColumn Binding="{Binding TotalSizeFormatted}" Header="TotalSize" />
-                <controls:DataGridTextColumn Binding="{Binding TotalFreeSpaceFormatted}" Header="TotalFreeSpace" />
-                <controls:DataGridTextColumn Binding="{Binding AvailableFreeSpaceFormatted}" Header="AvailableFreeSpace" />
+                <controls:DataGridTextColumn Binding="{Binding Device.Name}" Header="Drive" />
+                <controls:DataGridTextColumn Binding="{Binding Device.VolumeLabel}" Header="Volume Label" />
+                <controls:DataGridTextColumn Binding="{Binding Device.DriveType}" Header="DriveType" />
+                <controls:DataGridTextColumn Binding="{Binding Device.IsReady}" Header="IsReady" />
+                <controls:DataGridTextColumn Binding="{Binding Device.DriveFormat}" Header="DriveFormat" />
+                <controls:DataGridTextColumn Binding="{Binding Device.TotalSizeFormatted}" Header="TotalSize" />
+                <controls:DataGridTextColumn Binding="{Binding Device.TotalFreeSpaceFormatted}" Header="TotalFreeSpace" />
+                <controls:DataGridTextColumn Binding="{Binding Device.AvailableFreeSpaceFormatted}" Header="AvailableFreeSpace" />
             </controls:DataGrid.Columns>
         </controls:DataGrid>
-    </Grid>
+
+        <StackPanel x:Name="analysis" Orientation="Horizontal" RelativePanel.Below="dataGrid">
+            <TextBlock Style="{ThemeResource TitleTextBlockStyle}"
+               Text="Drive Analysis" />
+            <ProgressRing Margin="10,5" IsActive="{x:Bind ViewModel.IsLoading, Mode=OneWay}"
+                  Visibility="{x:Bind ViewModel.IsLoading, Converter={StaticResource BoolToVisibilityConverter}, Mode=OneWay}"/>
+        </StackPanel>
+
+
+        <ScrollViewer Name="ForegroundElement" IsTabStop="True" RelativePanel.Below="analysis"
+                      VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto">
+            <controls:DataGrid GridLinesVisibility="Horizontal" AutoGenerateColumns="False"
+                               ItemsSource="{x:Bind ViewModel.MimeTypeDetails, Mode=OneWay}">
+                <controls:DataGrid.Resources>
+                    <SolidColorBrush x:Key="DataGridColumnHeaderBackgroundColor" Color="Transparent" />
+                </controls:DataGrid.Resources>
+                <controls:DataGrid.Columns>
+                    <controls:DataGridTextColumn Binding="{Binding Extension}" Header="File Extension" />
+                    <controls:DataGridTextColumn Binding="{Binding TotalFiles}" Header="Number of files" />
+                    <controls:DataGridTextColumn Binding="{Binding TotalSizeFormatted}" Header="Size on disk" />
+                    <controls:DataGridTextColumn Binding="{Binding MimeType}" Header="MimeType" />
+                </controls:DataGrid.Columns>
+            </controls:DataGrid>
+
+        </ScrollViewer>
+
+    </RelativePanel>
+    
 </Page>
