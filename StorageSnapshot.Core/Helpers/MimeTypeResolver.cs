@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using StorageSnapshot.Core.Exceptions;
 
 namespace StorageSnapshot.Core.Helpers;
 
@@ -81,8 +82,18 @@ public class MimeTypeResolver
         { ".avi", "video/x-msvideo" }
     };
 
-    public static string GetMimeType(FileInfo fileInfo)
+    public static string GetMimeTypeOrDefault(FileInfo fileInfo)
     {
         return MimeTypes.TryGetValue(fileInfo.Extension, out var mimeType) ? mimeType : "application/octet-stream";
+    }
+
+    public static string GetMimeType(FileInfo fileInfo)
+    {
+        return MimeTypes.TryGetValue(fileInfo.Extension, out var mimeType) ? mimeType : throw new UnknownMimeTypeException(fileInfo);
+    }
+
+    public static bool TryGetMimeType(FileInfo fileInfo, out string mimeType)
+    {
+        return MimeTypes.TryGetValue(fileInfo.Extension, out mimeType);
     }
 }

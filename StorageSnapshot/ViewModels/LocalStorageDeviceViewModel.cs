@@ -12,7 +12,7 @@ namespace StorageSnapshot.ViewModels;
 public partial class LocalStorageDeviceViewModel : ObservableRecipient
 {
     [ObservableProperty]
-    private LocalStorageDevice device = null;
+    private LocalStorageDevice device;
 
     [ObservableProperty]
     private LocalStorageDeviceDetailsViewModel? details = null;

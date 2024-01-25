@@ -4,6 +4,7 @@ using System.Management;
 using System.Runtime.CompilerServices;
 using System.Threading;
 using StorageSnapshot.Core.Contracts.Services;
+using StorageSnapshot.Core.Exceptions;
 using StorageSnapshot.Core.Helpers;
 using StorageSnapshot.Core.Models;
 
@@ -74,7 +75,12 @@ public class LocalStorageDeviceService : ILocalStorageDeviceService
             {
                 localStorageDeviceDetails.TotalFiles++;
 
-                var mimeType = MimeTypeResolver.GetMimeType(file);
+                if (!MimeTypeResolver.TryGetMimeType(file, out var mimeType))
+                {
+                    // Skip unknown MIME types for now
+                    continue;
+                }
+                
                 if (!localStorageDeviceDetails.MimeTypeDetailsDictionary.ContainsKey(mimeType))
                 {
                     localStorageDeviceDetails.MimeTypeDetailsDictionary.Add(mimeType, new MimeTypeDetails(file.Extension, mimeType));

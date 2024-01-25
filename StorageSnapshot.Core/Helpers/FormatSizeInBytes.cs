@@ -10,7 +10,7 @@ public class FormatSizeInBytes
     public static string FormatByteSize(long bytes)
     {
         string[] sizes = { "B", "KB", "MB", "GB", "TB" };
-        int order = 0;
+        var order = 0;
         while (bytes >= 1024 && order < sizes.Length - 1)
         {
             order++;
@@ -23,7 +23,7 @@ public class FormatSizeInBytes
     public static string FormatByteSize(long bytes, int precision)
     {
         string[] sizes = { "B", "KB", "MB", "GB", "TB" };
-        int order = 0;
+        var order = 0;
         double adjustedSize = bytes;
 
         while (adjustedSize >= 1024 && order < sizes.Length - 1)
@@ -33,7 +33,7 @@ public class FormatSizeInBytes
         }
 
         // Using the precision parameter in the format string
-        string format = "{0:0." + new string('#', precision) + "} {1}";
+        var format = "{0:0." + new string('#', precision) + "} {1}";
 
         return String.Format(format, adjustedSize, sizes[order]);
     }

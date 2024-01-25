@@ -19,7 +19,7 @@ public partial class ContentGridDetailViewModel : ObservableRecipient, INavigati
         _localStorageDeviceService = localStorageDeviceService;
     }
 
-    public async void OnNavigatedTo(object parameter)
+    public void OnNavigatedTo(object parameter)
     {
         if (parameter is LocalStorageDeviceViewModel vm)
         {

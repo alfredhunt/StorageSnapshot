@@ -11,7 +11,7 @@ namespace StorageSnapshot.ViewModels;
 public partial class DataGridViewModel : ObservableRecipient, INavigationAware
 {
     private readonly ILocalStorageDeviceService _localStorageDeviceService;
-    private readonly Dictionary<string, MimeTypeDetails> _mimeTypeDetailsDictionary = new Dictionary<string, MimeTypeDetails>();
+    private readonly Dictionary<string, MimeTypeDetails> _mimeTypeDetailsDictionary = new();
     public ObservableCollection<MimeTypeDetails> MimeTypeDetails { get; } = new ObservableCollection<MimeTypeDetails>();
 
     public ObservableCollection<LocalStorageDeviceViewModel> LocalStorageDevices { get; } = new ObservableCollection<LocalStorageDeviceViewModel>();
@@ -31,13 +31,13 @@ public partial class DataGridViewModel : ObservableRecipient, INavigationAware
     [ObservableProperty]
     private double percentageInUse = 50;
     [ObservableProperty]
-    private string totalSizeFormatted;
+    private string? totalSizeFormatted;
     [ObservableProperty]
-    private string totalFreeSpaceFormatted;
+    private string? totalFreeSpaceFormatted;
     [ObservableProperty]
-    private string availableFreeSpaceFormatted;
+    private string? availableFreeSpaceFormatted;
     [ObservableProperty]
-    private string totalFreeSpaceOfTotalSize = "Holy Shit!";
+    private string? totalFreeSpaceOfTotalSize;
 
     public DataGridViewModel(ILocalStorageDeviceService localStorageDeviceService)
     {

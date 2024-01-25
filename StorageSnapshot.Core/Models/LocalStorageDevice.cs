@@ -8,7 +8,7 @@ using StorageSnapshot.Core.Helpers;
 namespace StorageSnapshot.Core.Models;
 public class LocalStorageDevice
 {
-    private DriveInfo _driveInfo = null;
+    private readonly DriveInfo _driveInfo = null;
     public string Name => _driveInfo.Name;
     public DriveType DriveType => _driveInfo.DriveType;
     public bool IsReady => _driveInfo.IsReady;
