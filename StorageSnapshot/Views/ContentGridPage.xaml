@@ -7,6 +7,8 @@
     xmlns:animations="using:CommunityToolkit.WinUI.UI.Animations"
     xmlns:controls="using:CommunityToolkit.WinUI.UI.Controls"
     xmlns:viewmodels="using:StorageSnapshot.ViewModels"
+    xmlns:behaviors="using:StorageSnapshot.Behaviors" 
+    behaviors:NavigationViewHeaderBehavior.HeaderMode="Never"
     mc:Ignorable="d">
 
     <Grid x:Name="ContentArea">
@@ -25,15 +27,23 @@
                     <Grid x:Name="itemThumbnail"
                           Padding="{StaticResource XSmallLeftTopRightBottomMargin}">
                         <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
-                            <FontIcon
-                                Glyph="{x:Bind Device.Symbol}"
+                            <FontIcon 
+                                FontSize="48"
+                                Glyph="{x:Bind Device.Symbol}" 
                                 AutomationProperties.Name="{x:Bind Device.SymbolName}" />
                             <TextBlock
-                                Margin="{StaticResource XXSmallTopMargin}"
                                 HorizontalAlignment="Center"
                                 Style="{ThemeResource BodyTextStyle}"
+                                FontWeight="Bold"
                                 Text="{x:Bind Device.VolumeLabelAndName}" />
-                            <ProgressBar Maximum="100" Value="{x:Bind Device.PercentageInUse}" Style="{StaticResource ProgressBarStyle}" />
+                            <TextBlock 
+                                Text="{x:Bind Device.TotalFreeSpaceOfTotalSize}" 
+                                Style="{StaticResource ListSubTitleStyle}" 
+                                Margin="{StaticResource XXSmallTopBottomMargin}"/>
+                            <ProgressBar 
+                                Maximum="100" 
+                                Value="{x:Bind Device.PercentageInUse}" 
+                                Style="{StaticResource ProgressBarStyle}" />
                         </StackPanel>
                     </Grid>
                 </DataTemplate>

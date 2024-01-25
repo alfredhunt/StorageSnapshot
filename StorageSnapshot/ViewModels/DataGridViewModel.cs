@@ -1,20 +1,18 @@
 ﻿using System.Collections.ObjectModel;
-using System.IO;
-using CommunityToolkit.Common;
 using CommunityToolkit.Mvvm.ComponentModel;
 
 using StorageSnapshot.Contracts.ViewModels;
 using StorageSnapshot.Core.Contracts.Services;
+using StorageSnapshot.Core.Helpers;
 using StorageSnapshot.Core.Models;
-using StorageSnapshot.Core.Services;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace StorageSnapshot.ViewModels;
 
 public partial class DataGridViewModel : ObservableRecipient, INavigationAware
 {
     private readonly ILocalStorageDeviceService _localStorageDeviceService;
-    private readonly object lockObject = new object();
+    private readonly Dictionary<string, MimeTypeDetails> _mimeTypeDetailsDictionary = new Dictionary<string, MimeTypeDetails>();
+    public ObservableCollection<MimeTypeDetails> MimeTypeDetails { get; } = new ObservableCollection<MimeTypeDetails>();
 
     public ObservableCollection<LocalStorageDeviceViewModel> LocalStorageDevices { get; } = new ObservableCollection<LocalStorageDeviceViewModel>();
     [ObservableProperty]
@@ -27,13 +25,19 @@ public partial class DataGridViewModel : ObservableRecipient, INavigationAware
     private long totalFiles;
     [ObservableProperty]
     private long totalDirectories;
-    public ObservableCollection<MimeTypeDetails> MimeTypeDetails { get; } = new ObservableCollection<MimeTypeDetails>();
-
+    
     [ObservableProperty]
     private bool isLoading = false;
-
-    private Dictionary<string, MimeTypeDetails> _mimeTypeDetailsDictionary = new Dictionary<string, MimeTypeDetails>();
-
+    [ObservableProperty]
+    private double percentageInUse = 50;
+    [ObservableProperty]
+    private string totalSizeFormatted;
+    [ObservableProperty]
+    private string totalFreeSpaceFormatted;
+    [ObservableProperty]
+    private string availableFreeSpaceFormatted;
+    [ObservableProperty]
+    private string totalFreeSpaceOfTotalSize = "Holy Shit!";
 
     public DataGridViewModel(ILocalStorageDeviceService localStorageDeviceService)
     {
@@ -45,6 +49,7 @@ public partial class DataGridViewModel : ObservableRecipient, INavigationAware
         List<Task> tasks = new List<Task>();
         LocalStorageDevices.Clear();
         var data = await _localStorageDeviceService.GetLocalStorageDevicesAsync();
+        CreateSummaryInfo(data);
         foreach (var localStorageDevice in data)
         {
             var vm = new LocalStorageDeviceViewModel(_localStorageDeviceService, localStorageDevice);
@@ -56,12 +61,23 @@ public partial class DataGridViewModel : ObservableRecipient, INavigationAware
         IsLoading = false;
     }
 
-    private void CombineDeviceDetails(Task task)
+    private void CreateSummaryInfo(IEnumerable<LocalStorageDevice> devices)
     {
-        var devices = LocalStorageDevices.Select(selector: x => x.Device);
         TotalSize = devices.Sum(selector: x => x.TotalSize);
         TotalFreeSpace = devices.Sum(selector: x => x.TotalFreeSpace);
         AvailableFreeSpace = devices.Sum(selector: x => x.AvailableFreeSpace);
+        PercentageInUse = ((TotalSize - TotalFreeSpace) / (double)TotalSize) * 100;
+
+        TotalSizeFormatted = FormatSizeInBytes.FormatByteSize(TotalSize, 2);
+        TotalFreeSpaceFormatted = FormatSizeInBytes.FormatByteSize(TotalFreeSpace, 2);
+        AvailableFreeSpaceFormatted = FormatSizeInBytes.FormatByteSize(AvailableFreeSpace, 2);
+
+        TotalFreeSpaceOfTotalSize = $"{TotalFreeSpaceFormatted} free of {TotalSizeFormatted}";
+    }
+
+    private void CombineDeviceDetails(Task task)
+    {
+        
 
         _mimeTypeDetailsDictionary.Clear();
         var details = LocalStorageDevices.Select(selector: x => x.Details);

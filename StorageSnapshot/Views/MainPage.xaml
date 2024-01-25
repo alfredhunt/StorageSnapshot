@@ -4,9 +4,81 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:behaviors="using:StorageSnapshot.Behaviors" 
+    behaviors:NavigationViewHeaderBehavior.HeaderMode="Never"
     mc:Ignorable="d">
 
     <Grid x:Name="ContentArea">
-        
+
+        <VisualStateManager.VisualStateGroups>
+            <VisualStateGroup>
+                <VisualState>
+                    <VisualState.StateTriggers>
+                        <!--641 is the default CompactModeThresholdWidth in NavigationView-->
+                        <AdaptiveTrigger MinWindowWidth="675" />
+                    </VisualState.StateTriggers>
+                    <VisualState.Setters>
+                        <Setter Target="buttonPanel.Orientation" Value="Horizontal"/>
+                    </VisualState.Setters>
+                </VisualState>
+            </VisualStateGroup>
+        </VisualStateManager.VisualStateGroups>
+
+
+        <RelativePanel>
+
+            <TextBlock x:Name="welcomeText" Text="Welcome to StorageSnapshot!" 
+                       RelativePanel.AlignHorizontalCenterWithPanel="True"
+                       RelativePanel.AlignTopWithPanel="True"
+                       Margin="{ThemeResource LargeTopBottomMargin}"
+                       Style="{ThemeResource TitleLargeTextBlockStyle}" />
+
+            <TextBlock x:Name="introText"
+                       Text="Discover the diversity of file types across your local disks."
+                       Style="{ThemeResource TitleTextBlockStyle}"
+                       TextWrapping="Wrap"
+                       TextAlignment="Center"
+                       RelativePanel.AlignHorizontalCenterWithPanel="True"
+                       RelativePanel.Below="welcomeText"
+                       Margin="{ThemeResource MediumBottomMargin}"/>
+
+            <StackPanel x:Name="buttonPanel" Orientation="Vertical"
+                        Margin="{ThemeResource MediumBottomMargin}"
+                        RelativePanel.Below="introText"
+                        RelativePanel.AlignHorizontalCenterWithPanel="True">
+                
+                <Button x:Name="overviewButton" Content="Overview" 
+                    Width="150" Height="100"
+                    FontSize="{ThemeResource MediumFontSize}"
+                    Margin="{ThemeResource SmallLeftTopRightBottomMargin}"
+                    Click="OverviewButton_Click"/>
+
+                <Button x:Name="gridViewButton" Content="Grid View" 
+                    Width="150" Height="100"
+                    FontSize="{ThemeResource MediumFontSize}"
+                    Margin="{ThemeResource SmallLeftTopRightBottomMargin}"
+                    Click="GridViewButton_Click"/>
+
+                <Button x:Name="listViewButton" Content="List View"
+                    Width="150" Height="100"
+                    FontSize="{ThemeResource MediumFontSize}"
+                    Margin="{ThemeResource SmallLeftTopRightBottomMargin}"
+                    Click="ListViewButton_Click" />
+                
+            </StackPanel>
+
+            <TextBlock x:Name="contributeOrSupportText"  Text="Contribute to or support the project:"
+                       RelativePanel.Below="buttonPanel"
+                       RelativePanel.AlignHorizontalCenterWithPanel="True"
+                       FontWeight="Bold"/>
+
+            <HyperlinkButton x:Name="contributeLink" Content="Contribute on GitHub"
+                             RelativePanel.Below="contributeOrSupportText"
+                             RelativePanel.AlignHorizontalCenterWithPanel="True"
+                             NavigateUri="https://github.com/alfredhunt/StorageSnapshot"
+                             Margin="{ThemeResource MediumTopMargin}"/>
+
+        </RelativePanel>
+
     </Grid>
 </Page>

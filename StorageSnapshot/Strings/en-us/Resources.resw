@@ -127,16 +127,16 @@
     <value>Welcome</value>
   </data>
   <data name="Shell_ContentGrid.Content" xml:space="preserve">
-    <value>ContentGrid</value>
+    <value>Grid</value>
   </data>
   <data name="ListDetails_NoSelection.Text" xml:space="preserve">
     <value>Select an item from the list.</value>
   </data>
   <data name="Shell_ListDetails.Content" xml:space="preserve">
-    <value>ListDetails</value>
+    <value>List</value>
   </data>
   <data name="Shell_DataGrid.Content" xml:space="preserve">
-    <value>DataGrid</value>
+    <value>Overview</value>
   </data>
   <data name="Settings_Personalization.Text" xml:space="preserve">
     <value>Personalization</value>

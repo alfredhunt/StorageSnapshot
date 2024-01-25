@@ -5,7 +5,8 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:controls="using:CommunityToolkit.WinUI.UI.Controls"
-    xmlns:models="using:StorageSnapshot.Core.Models"
+    xmlns:behaviors="using:StorageSnapshot.Behaviors" 
+    behaviors:NavigationViewHeaderBehavior.HeaderMode="Never"
     mc:Ignorable="d">
 
     <Grid x:Name="ContentArea">
@@ -18,99 +19,92 @@
                         <AdaptiveTrigger MinWindowWidth="641" />
                     </VisualState.StateTriggers>
                     <VisualState.Setters>
-                        <Setter Target="propertiesGroup1.(RelativePanel.RightOf)" Value="itemHero" />
-                        <Setter Target="propertiesGroup1.(RelativePanel.Below)" Value="title" />
-                        <Setter Target="propertiesGroup2.(RelativePanel.RightOf)" Value="propertiesGroup1" />
-                        <Setter Target="propertiesGroup2.(RelativePanel.Below)" Value="title" />
-                        <Setter Target="propertiesGroup1.Width" Value="200" />
+                        <Setter Target="itemHero.(Visibility)" Value="Visible" />
+                        <Setter Target="title.(Margin)" Value="{StaticResource SmallTopMargin}"/>
                     </VisualState.Setters>
                 </VisualState>
             </VisualStateGroup>
         </VisualStateManager.VisualStateGroups>
 
-        <controls:DockPanel>
-            <StackPanel controls:DockPanel.Dock="Top" x:Name="contentPanel">
-                <RelativePanel>
-                    <Grid
-                        x:Name="itemHero"
-                        Width="200"
-                        Height="200"
-                        Margin="{StaticResource SmallRightMargin}"
-                        Padding="{StaticResource XSmallLeftTopRightBottomMargin}"
-                        HorizontalAlignment="Left"
-                        VerticalAlignment="Top"
-                        RelativePanel.AlignTopWithPanel="True"
-                        RelativePanel.AlignLeftWithPanel="True">
-                        <FontIcon
-                        HorizontalAlignment="Center"
-                        VerticalAlignment="Center"
-                        FontSize="70"
-                        Glyph="{x:Bind ViewModel.Item.Device.Symbol}"
-                        AutomationProperties.Name="{x:Bind ViewModel.Item.Device.SymbolName}" />
-                    </Grid>
+        <RelativePanel>
+            <Grid x:Name="itemHero" Visibility="Collapsed"                
+                  Width="200" 
+                  Height="200"
+                  Margin="{StaticResource SmallRightMargin}"
+                  Padding="{StaticResource XSmallLeftTopRightBottomMargin}"
+                  HorizontalAlignment="Left"
+                  VerticalAlignment="Top"
+                  RelativePanel.AlignTopWithPanel="True"
+                  RelativePanel.AlignLeftWithPanel="True">
+                <FontIcon HorizontalAlignment="Center"
+                          VerticalAlignment="Center"
+                          FontSize="70"
+                          Glyph="{x:Bind ViewModel.Item.Device.Symbol}"
+                          AutomationProperties.Name="{x:Bind ViewModel.Item.Device.SymbolName}" />
+            </Grid>
 
-                    <TextBlock
-                        x:Name="title"
-                        Margin="{StaticResource XXSmallTopMargin}"
-                        RelativePanel.AlignTopWithPanel="True"
-                        RelativePanel.RightOf="itemHero"
-                        Style="{ThemeResource TitleTextBlockStyle}"
-                        Text="{x:Bind ViewModel.Item.Device.VolumeLabelAndName, Mode=OneWay}" />
+            <TextBlock x:Name="title"
+                       Margin="{StaticResource MediumTopMargin}"
+                       RelativePanel.AlignTopWithPanel="True"
+                       RelativePanel.RightOf="itemHero"
+                       Style="{ThemeResource TitleTextBlockStyle}"
+                       Text="{x:Bind ViewModel.Item.Device.VolumeLabelAndName, Mode=OneWay}" />
 
-                    <ProgressRing x:Name="progressRing1" 
-                                  Margin="{StaticResource XXSmallTopMargin}"
-                                  RelativePanel.AlignTopWithPanel="True"
-                                  RelativePanel.RightOf="title" 
-                                  IsActive="{x:Bind ViewModel.Item.IsLoading, Mode=OneWay}"
-                                  Visibility="{x:Bind ViewModel.Item.IsLoading, Converter={StaticResource BoolToVisibilityConverter}, Mode=OneWay}"/>
-
-                    <StackPanel x:Name="propertiesGroup1" RelativePanel.Below="itemHero">
-                        <StackPanel x:Name="driveTypeGroup" Margin="{StaticResource SmallTopMargin}">
-                            <TextBlock Style="{ThemeResource SubtitleTextBlockStyle}" Text="Drive type" />
-                            <TextBlock Style="{ThemeResource BodyTextBlockStyle}" Text="{x:Bind ViewModel.Item.Device.DriveType}" />
-                        </StackPanel>
-
-                        <StackPanel x:Name="driveFormatGroup" Margin="{StaticResource SmallTopMargin}">
-                            <TextBlock Style="{ThemeResource SubtitleTextBlockStyle}" Text="Drive format" />
-                            <TextBlock Style="{ThemeResource BodyTextBlockStyle}" Text="{x:Bind ViewModel.Item.Device.DriveFormat}" />
-                        </StackPanel>
-
-                        <StackPanel x:Name="volumeLabelGroup" Margin="{StaticResource SmallTopMargin}">
-                            <TextBlock Style="{ThemeResource SubtitleTextBlockStyle}" Text="Volume label" />
-                            <TextBlock Style="{ThemeResource BodyTextBlockStyle}" Text="{x:Bind ViewModel.Item.Device.VolumeLabel}" />
-                        </StackPanel>
+            <controls:UniformGrid x:Name="statsGrid" 
+                                  RelativePanel.Below="title" 
+                                  RelativePanel.RightOf="itemHero"
+                                  Margin="{StaticResource SmallLeftMargin}"
+                                  Columns="2">
+                <StackPanel>
+                    <StackPanel x:Name="driveTypeGroup" Margin="{StaticResource SmallTopMargin}">
+                        <TextBlock Style="{ThemeResource SubtitleTextBlockStyle}" Text="Drive type" />
+                        <TextBlock Style="{ThemeResource BodyTextBlockStyle}" Text="{x:Bind ViewModel.Item.Device.DriveType}" />
                     </StackPanel>
 
-                    <StackPanel x:Name="propertiesGroup2" RelativePanel.Below="propertiesGroup1">
-                        <StackPanel x:Name="totalSizeGroup" Margin="{StaticResource SmallTopMargin}">
-                            <TextBlock Style="{ThemeResource SubtitleTextBlockStyle}" Text="Total size" />
-                            <TextBlock Style="{ThemeResource BodyTextBlockStyle}" Text="{x:Bind ViewModel.Item.Device.TotalSizeFormatted}" />
-                        </StackPanel>
-
-                        <StackPanel x:Name="totalFreeSpacegroup" Margin="{StaticResource SmallTopMargin}">
-                            <TextBlock Style="{ThemeResource SubtitleTextBlockStyle}" Text="Total free space" />
-                            <TextBlock Style="{ThemeResource BodyTextBlockStyle}" Text="{x:Bind ViewModel.Item.Device.TotalFreeSpaceFormatted}" />
-                        </StackPanel>
-
-                        <StackPanel x:Name="availableFreeSpaceGroup" Margin="{StaticResource SmallTopMargin}">
-                            <TextBlock Style="{ThemeResource SubtitleTextBlockStyle}" Text="Available free space" />
-                            <TextBlock Style="{ThemeResource BodyTextBlockStyle}" Text="{x:Bind ViewModel.Item.Device.AvailableFreeSpaceFormatted}" />
-                        </StackPanel>
+                    <StackPanel x:Name="driveFormatGroup" Margin="{StaticResource SmallTopMargin}">
+                        <TextBlock Style="{ThemeResource SubtitleTextBlockStyle}" Text="Drive format" />
+                        <TextBlock Style="{ThemeResource BodyTextBlockStyle}" Text="{x:Bind ViewModel.Item.Device.DriveFormat}" />
                     </StackPanel>
 
-                    <StackPanel Orientation="Horizontal"
-                                x:Name="analysis"
-                                RelativePanel.Below="propertiesGroup2">
-                        <TextBlock Style="{ThemeResource TitleTextBlockStyle}"
+                    <StackPanel x:Name="volumeLabelGroup" Margin="{StaticResource SmallTopMargin}">
+                        <TextBlock Style="{ThemeResource SubtitleTextBlockStyle}" Text="Volume label" />
+                        <TextBlock Style="{ThemeResource BodyTextBlockStyle}" Text="{x:Bind ViewModel.Item.Device.VolumeLabel}" />
+                    </StackPanel>
+                </StackPanel>
+
+                <StackPanel>
+                    <StackPanel x:Name="totalSizeGroup" Margin="{StaticResource SmallTopMargin}">
+                        <TextBlock Style="{ThemeResource SubtitleTextBlockStyle}" Text="Total size" />
+                        <TextBlock Style="{ThemeResource BodyTextBlockStyle}" Text="{x:Bind ViewModel.Item.Device.TotalSizeFormatted}" />
+                    </StackPanel>
+
+                    <StackPanel x:Name="totalFreeSpacegroup" Margin="{StaticResource SmallTopMargin}">
+                        <TextBlock Style="{ThemeResource SubtitleTextBlockStyle}" Text="Total free space" />
+                        <TextBlock Style="{ThemeResource BodyTextBlockStyle}" Text="{x:Bind ViewModel.Item.Device.TotalFreeSpaceFormatted}" />
+                    </StackPanel>
+
+                    <StackPanel x:Name="availableFreeSpaceGroup" Margin="{StaticResource SmallTopMargin}">
+                        <TextBlock Style="{ThemeResource SubtitleTextBlockStyle}" Text="Available free space" />
+                        <TextBlock Style="{ThemeResource BodyTextBlockStyle}" Text="{x:Bind ViewModel.Item.Device.AvailableFreeSpaceFormatted}" />
+                    </StackPanel>
+                </StackPanel>
+            </controls:UniformGrid>
+
+            <StackPanel x:Name="analysis" 
+                        Margin="{StaticResource MediumTopMargin}"
+                        Orientation="Horizontal" 
+                        RelativePanel.Below="statsGrid">
+                <TextBlock Style="{ThemeResource TitleTextBlockStyle}"
                                    Text="Drive Analysis" />
-                        <ProgressRing Margin="10,5" IsActive="{x:Bind ViewModel.Item.IsLoading, Mode=OneWay}"
-                                      Visibility="{x:Bind ViewModel.Item.IsLoading, Converter={StaticResource BoolToVisibilityConverter}, Mode=OneWay}"/>
-                    </StackPanel>
-
-                </RelativePanel>
+                <ProgressRing Margin="{StaticResource MediumLeftRightMargin}" 
+                              IsActive="{x:Bind ViewModel.Item.IsLoading, Mode=OneWay}"
+                              Visibility="{x:Bind ViewModel.Item.IsLoading, Converter={StaticResource BoolToVisibilityConverter}, Mode=OneWay}"/>
             </StackPanel>
 
-            <ScrollViewer IsTabStop="True">
+            <ScrollViewer IsTabStop="True" 
+                          Margin="{StaticResource SmallTopMargin}"
+                          RelativePanel.Below="analysis"
+                          HorizontalScrollMode="Enabled">
                 <controls:DataGrid AutoGenerateColumns="False"
                                    GridLinesVisibility="Horizontal"
                                    ItemsSource="{x:Bind ViewModel.Item.Details.MimeTypeDetails, Mode=OneWay}">
@@ -118,15 +112,16 @@
                         <SolidColorBrush x:Key="DataGridColumnHeaderBackgroundColor" Color="Transparent" />
                     </controls:DataGrid.Resources>
                     <controls:DataGrid.Columns>
-                        <controls:DataGridTextColumn Binding="{Binding Extension}" Header="File Extension" />
+                        <controls:DataGridTextColumn Binding="{Binding Extension}" Header="File extension" />
                         <controls:DataGridTextColumn Binding="{Binding TotalFiles}" Header="Number of files" />
                         <controls:DataGridTextColumn Binding="{Binding TotalSizeFormatted}" Header="Size on disk" />
-                        <controls:DataGridTextColumn Binding="{Binding MimeType}" Header="MimeType" />
+                        <controls:DataGridTextColumn Binding="{Binding MimeType}" Header="MIME type" />
                     </controls:DataGrid.Columns>
                 </controls:DataGrid>
             </ScrollViewer>
 
-        </controls:DockPanel>
+        </RelativePanel>
+
 
     </Grid>
 </Page>

@@ -5,54 +5,83 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:controls="using:CommunityToolkit.WinUI.UI.Controls"
+    xmlns:behaviors="using:StorageSnapshot.Behaviors" 
+    behaviors:NavigationViewHeaderBehavior.HeaderMode="Never"
     mc:Ignorable="d">
 
-    <RelativePanel x:Name="ContentArea">
-        <controls:DataGrid
-            x:Name="dataGrid"
-            AutoGenerateColumns="False"
-            GridLinesVisibility="Horizontal"
-            ItemsSource="{x:Bind ViewModel.LocalStorageDevices, Mode=OneWay}">
-            <controls:DataGrid.Resources>
-                <SolidColorBrush x:Key="DataGridColumnHeaderBackgroundColor" Color="Transparent" />
-            </controls:DataGrid.Resources>
-            <controls:DataGrid.Columns>
-                <controls:DataGridTextColumn Binding="{Binding Device.Name}" Header="Drive" />
-                <controls:DataGridTextColumn Binding="{Binding Device.VolumeLabel}" Header="Volume Label" />
-                <controls:DataGridTextColumn Binding="{Binding Device.DriveType}" Header="DriveType" />
-                <controls:DataGridTextColumn Binding="{Binding Device.IsReady}" Header="IsReady" />
-                <controls:DataGridTextColumn Binding="{Binding Device.DriveFormat}" Header="DriveFormat" />
-                <controls:DataGridTextColumn Binding="{Binding Device.TotalSizeFormatted}" Header="TotalSize" />
-                <controls:DataGridTextColumn Binding="{Binding Device.TotalFreeSpaceFormatted}" Header="TotalFreeSpace" />
-                <controls:DataGridTextColumn Binding="{Binding Device.AvailableFreeSpaceFormatted}" Header="AvailableFreeSpace" />
-            </controls:DataGrid.Columns>
-        </controls:DataGrid>
+    <Grid x:Name="ContentArea">
 
-        <StackPanel x:Name="analysis" Orientation="Horizontal" RelativePanel.Below="dataGrid">
-            <TextBlock Style="{ThemeResource TitleTextBlockStyle}"
-               Text="Drive Analysis" />
-            <ProgressRing Margin="10,5" IsActive="{x:Bind ViewModel.IsLoading, Mode=OneWay}"
-                  Visibility="{x:Bind ViewModel.IsLoading, Converter={StaticResource BoolToVisibilityConverter}, Mode=OneWay}"/>
-        </StackPanel>
+        <RelativePanel>
 
+            <StackPanel x:Name="title"
+                        RelativePanel.AlignTopWithPanel="True"
+                        RelativePanel.AlignLeftWithPanel="True">
+                <TextBlock Margin="{ThemeResource SmallTopMargin}"
+                           Style="{ThemeResource TitleTextBlockStyle}" 
+                           Text="System Overview" />
+                <TextBlock Margin="{ThemeResource XSmallTopBottomMargin}"
+                           Style="{ThemeResource SubtitleTextBlockStyle}" 
+                           Text="{x:Bind ViewModel.TotalFreeSpaceOfTotalSize}" />
+                <ProgressBar Maximum="100" 
+                             Value="{x:Bind ViewModel.PercentageInUse}" 
+                             Style="{StaticResource ProgressBarStyle}" />
+            </StackPanel>
 
-        <ScrollViewer Name="ForegroundElement" IsTabStop="True" RelativePanel.Below="analysis"
-                      VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto">
-            <controls:DataGrid GridLinesVisibility="Horizontal" AutoGenerateColumns="False"
-                               ItemsSource="{x:Bind ViewModel.MimeTypeDetails, Mode=OneWay}">
+            <controls:DataGrid x:Name="dataGrid" 
+                               Margin="{StaticResource SmallTopMargin}"
+                               RelativePanel.Below="title"
+                               AutoGenerateColumns="False"
+                               GridLinesVisibility="Horizontal"                           
+                               ItemsSource="{x:Bind ViewModel.LocalStorageDevices, Mode=OneWay}">
                 <controls:DataGrid.Resources>
                     <SolidColorBrush x:Key="DataGridColumnHeaderBackgroundColor" Color="Transparent" />
                 </controls:DataGrid.Resources>
                 <controls:DataGrid.Columns>
-                    <controls:DataGridTextColumn Binding="{Binding Extension}" Header="File Extension" />
-                    <controls:DataGridTextColumn Binding="{Binding TotalFiles}" Header="Number of files" />
-                    <controls:DataGridTextColumn Binding="{Binding TotalSizeFormatted}" Header="Size on disk" />
-                    <controls:DataGridTextColumn Binding="{Binding MimeType}" Header="MimeType" />
+                    <controls:DataGridTextColumn Binding="{Binding Device.Name}" Header="Drive" />
+                    <controls:DataGridTextColumn Binding="{Binding Device.VolumeLabel}" Header="Volume Label" />
+                    <controls:DataGridTextColumn Binding="{Binding Device.DriveType}" Header="Drive Type" />
+                    <controls:DataGridTextColumn Binding="{Binding Device.DriveFormat}" Header="Drive Format" />
+                    <controls:DataGridTextColumn Binding="{Binding Device.TotalSizeFormatted}" Header="Total Size" />
+                    <controls:DataGridTextColumn Binding="{Binding Device.TotalFreeSpaceFormatted}" Header="Total Free Space" />
+                    <controls:DataGridTextColumn Binding="{Binding Device.AvailableFreeSpaceFormatted}" Header="Available Free Space" />
                 </controls:DataGrid.Columns>
             </controls:DataGrid>
 
-        </ScrollViewer>
+            <StackPanel x:Name="analysis" 
+                        Margin="{StaticResource MediumTopMargin}"
+                        Orientation="Horizontal" 
+                        RelativePanel.Below="dataGrid">
+                <TextBlock Style="{ThemeResource TitleTextBlockStyle}"
+                           Text="Drive Analysis" />
+                <ProgressRing Margin="{StaticResource MediumLeftRightMargin}" 
+                              IsActive="{x:Bind ViewModel.IsLoading, Mode=OneWay}"
+                              Visibility="{x:Bind ViewModel.IsLoading, Converter={StaticResource BoolToVisibilityConverter}, Mode=OneWay}"/>
+            </StackPanel>
 
-    </RelativePanel>
-    
+            <ScrollViewer Name="ForegroundElement" 
+                          Margin="{StaticResource SmallTopMargin}"
+                          IsTabStop="True" 
+                          RelativePanel.Below="analysis"
+                          VerticalScrollBarVisibility="Auto" 
+                          HorizontalScrollBarVisibility="Auto">
+                <controls:DataGrid GridLinesVisibility="Horizontal" 
+                                   AutoGenerateColumns="False"
+                                   ItemsSource="{x:Bind ViewModel.MimeTypeDetails, Mode=OneWay}">
+                    <controls:DataGrid.Resources>
+                        <SolidColorBrush x:Key="DataGridColumnHeaderBackgroundColor" Color="Transparent" />
+                    </controls:DataGrid.Resources>
+                    <controls:DataGrid.Columns>
+                        <controls:DataGridTextColumn Binding="{Binding Extension}" Header="File extension" />
+                        <controls:DataGridTextColumn Binding="{Binding TotalFiles}" Header="Number of files" />
+                        <controls:DataGridTextColumn Binding="{Binding TotalSizeFormatted}" Header="Size on disk" />
+                        <controls:DataGridTextColumn Binding="{Binding MimeType}" Header="MIME Type" />
+                    </controls:DataGrid.Columns>
+                </controls:DataGrid>
+
+            </ScrollViewer>
+
+        </RelativePanel>
+        
+    </Grid>
+
 </Page>
