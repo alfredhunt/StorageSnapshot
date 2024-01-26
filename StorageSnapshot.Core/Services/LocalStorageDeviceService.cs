@@ -44,7 +44,20 @@ public class LocalStorageDeviceService : ILocalStorageDeviceService
 
     private static IEnumerable<LocalStorageDevice> GetDriveInfo()
     {
-        return DriveInfo.GetDrives().Select(x => new LocalStorageDevice(x));
+        var drives = DriveInfo.GetDrives().Select(x => new LocalStorageDevice(x));
+
+        return drives.ToList().Where(DriveIsPermissible);
+    }
+
+    private static bool DriveIsPermissible(LocalStorageDevice drive)
+    {
+        try
+        {
+            _ = drive.VolumeLabel;
+            return true;
+        }
+        catch { }
+        return false;
     }
 
     public async Task<LocalStorageDeviceDetails> GetLocalStorageDeviceDetailsAsync(LocalStorageDevice localStorageDevice)
