@@ -104,13 +104,7 @@ jobs:
       uses: actions/upload-artifact@v4.1.0
       with:
         name: ${{ env.Project_Directory }}_${{ matrix.platform }}_${{ matrix.configuration }}
-        path: |
-          ${{ env.Project_Directory }}/Packages/*/StorageSnapshot*.msix
-          ${{ env.Project_Directory }}/Packages/*/StorageSnapshot*.cer
-          ${{ env.Project_Directory }}/Packages/*/Install.ps1
-          ${{ env.Project_Directory }}/Packages/*/Add-AppDevPackage.ps1
-          ${{ env.Project_Directory }}/Packages/*/Dependencies/*
-          ${{ env.Project_Directory }}/Packages/*/Add-AppDevPackage.resources/*
+        path: ${{ env.Solution_Name }}\\Packages\\StorageSnapshot*\\
 
     # Release if on main
     - name: Create GH release
@@ -121,11 +115,5 @@ jobs:
         name: 'StorageSnapshot v${{ steps.gitversion.outputs.majorminorpatch }}'
         tag_name: 'v${{ steps.gitversion.outputs.majorminorpatch }}'
         body: 'To install the MSIX version, you first have to add the certificate included in the MSIX (only need to do that once).'
-        files: |
-          ${{ env.Project_Directory }}/Packages/*/StorageSnapshot*.msix
-          ${{ env.Project_Directory }}/Packages/*/StorageSnapshot*.cer
-          ${{ env.Project_Directory }}/Packages/*/Install.ps1
-          ${{ env.Project_Directory }}/Packages/*/Add-AppDevPackage.ps1
-          ${{ env.Project_Directory }}/Packages/*/Dependencies/*
-          ${{ env.Project_Directory }}/Packages/*/Add-AppDevPackage.resources/*
+        files: ${{ env.Project_Directory }}\\Packages\\**\\StorageSnapshot*.msix
         fail_on_unmatched_files: true
