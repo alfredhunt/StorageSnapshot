@@ -122,10 +122,10 @@ jobs:
         tag_name: 'v${{ steps.gitversion.outputs.majorminorpatch }}'
         body: 'To install the MSIX version, you first have to add the certificate included in the MSIX (only need to do that once).'
         files: |
-          ${{ env.Project_Directory }}/Packages/**/StorageSnapshot*.msix
-          ${{ env.Project_Directory }}/Packages/**/StorageSnapshot*.cer
-          ${{ env.Project_Directory }}/Packages/**/Install.ps1
-          ${{ env.Project_Directory }}/Packages/**/Add-AppDevPackage.ps1
-          ${{ env.Project_Directory }}/Packages/**/Dependencies/*
-          ${{ env.Project_Directory }}/Packages/**/Add-AppDevPackage.resources/*
+          ${{ env.Project_Directory }}/Packages/*/StorageSnapshot*.msix
+          ${{ env.Project_Directory }}/Packages/*/StorageSnapshot*.cer
+          ${{ env.Project_Directory }}/Packages/*/Install.ps1
+          ${{ env.Project_Directory }}/Packages/*/Add-AppDevPackage.ps1
+          ${{ env.Project_Directory }}/Packages/*/Dependencies/*
+          ${{ env.Project_Directory }}/Packages/*/Add-AppDevPackage.resources/*
         fail_on_unmatched_files: true
