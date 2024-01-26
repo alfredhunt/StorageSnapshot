@@ -111,7 +111,7 @@ jobs:
       uses: softprops/action-gh-release@v1
       with:
         draft: false
-        prerelease: true
+        prerelease: false
         name: 'StorageSnapshot v${{ steps.gitversion.outputs.majorminorpatch }}'
         tag_name: 'v${{ steps.gitversion.outputs.majorminorpatch }}'
         body: 'To install the MSIX version, you first have to add the certificate included in the MSIX (only need to do that once).'
