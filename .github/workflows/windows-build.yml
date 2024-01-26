@@ -98,13 +98,9 @@ jobs:
     - name: Remove the pfx
       run: Remove-Item -path $env:Project_Directory\StorageSnapshot_TemporaryKey.pfx
 
-    # Compress the contents of the packages folder
-    - name: Compress the contents of the packages folder
-      run: Compress-Archive -Path ${{ env.Project_Directory }}/Packages/${{ env.Project_Directory }}*/* -DestinationPath ${{ env.Project_Directory }}_${{ matrix.platform }}_${{ matrix.configuration }}.zip
-
     # Upload the MSIX package: https://github.com/marketplace/actions/upload-a-build-artifact
     - name: Upload MSIX package
       uses: actions/upload-artifact@v4.1.0
       with:
         name: ${{ env.Project_Directory }}_${{ matrix.platform }}_${{ matrix.configuration }}
-        path: ${{ env.Project_Directory }}_${{ matrix.platform }}_${{ matrix.configuration }}.zip
+        path: ${{ env.Solution_Name }}\\Packages
