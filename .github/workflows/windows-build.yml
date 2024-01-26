@@ -103,4 +103,4 @@ jobs:
       uses: actions/upload-artifact@v4.1.0
       with:
         name: ${{ env.Project_Directory }}_${{ matrix.platform }}_${{ matrix.configuration }}
-        path: ${{ env.Solution_Name }}\\Packages
+        path: ${{ env.Project_Directory }}\\Packages
