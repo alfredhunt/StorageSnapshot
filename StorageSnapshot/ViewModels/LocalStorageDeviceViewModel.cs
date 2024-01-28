@@ -28,7 +28,7 @@ public partial class LocalStorageDeviceViewModel : ObservableRecipient
         Device = localStorageDevice;
     }
 
-    public async Task<LocalStorageDeviceDetails> LoadDetailsAsync()
+    public async Task<LocalStorageDeviceAnalysis> LoadDetailsAsync()
     {
         IsLoading = true;
         var details = await _localStorageDeviceService.GetLocalStorageDeviceDetailsAsync(Device);
