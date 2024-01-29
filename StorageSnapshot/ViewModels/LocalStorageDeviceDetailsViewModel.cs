@@ -6,7 +6,7 @@ namespace StorageSnapshot.ViewModels;
 
 public partial class LocalStorageDeviceDetailsViewModel : ObservableRecipient
 {
-    private LocalStorageDeviceDetails _details;
+    private LocalStorageDeviceAnalysis _details;
 
     [ObservableProperty]
     private long totalFiles;
@@ -16,7 +16,7 @@ public partial class LocalStorageDeviceDetailsViewModel : ObservableRecipient
     
     public IEnumerable<MimeTypeDetails> MimeTypeDetails => _details.MimeTypeDetailsDictionary.Values;
 
-    public LocalStorageDeviceDetailsViewModel(LocalStorageDeviceDetails details)
+    public LocalStorageDeviceDetailsViewModel(LocalStorageDeviceAnalysis details)
     {
         _details = details;
         TotalFiles = details.TotalFiles;

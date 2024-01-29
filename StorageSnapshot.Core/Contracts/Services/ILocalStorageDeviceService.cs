@@ -10,6 +10,6 @@ public interface ILocalStorageDeviceService
 {
     Task Initialize();
     Task<IEnumerable<LocalStorageDevice>> GetLocalStorageDevicesAsync();
-    Task<LocalStorageDeviceDetails> GetLocalStorageDeviceDetailsAsync(LocalStorageDevice localStorageDevice1);
+    Task<LocalStorageDeviceAnalysis> GetLocalStorageDeviceDetailsAsync(LocalStorageDevice localStorageDevice1);
 
 }

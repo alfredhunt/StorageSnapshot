@@ -1,22 +1,33 @@
 ﻿using System;
-using System.IO;
-using System.Management;
-using System.Runtime.CompilerServices;
-using System.Threading;
+using System.Diagnostics;
 using StorageSnapshot.Core.Contracts.Services;
 using StorageSnapshot.Core.Exceptions;
 using StorageSnapshot.Core.Helpers;
 using StorageSnapshot.Core.Models;
 
 namespace StorageSnapshot.Core.Services;
+
 public class LocalStorageDeviceService : ILocalStorageDeviceService
 {
     private List<LocalStorageDevice> _allStorageDeviceInfos;
+    private readonly Dictionary<LocalStorageDevice, Task<LocalStorageDeviceAnalysis>> _localStorageDeviceDetailsTasks = new();
 
-    private readonly Dictionary<LocalStorageDevice, Task<LocalStorageDeviceDetails>> _localStorageDeviceDetailsTasks = new();
+    public IAccessControlService AccessControlService
+    {
+        get; private set;
+    }
+
+    public LocalStorageDeviceService(IAccessControlService accessControlService)
+    {
+        AccessControlService = accessControlService;
+    }
 
     public async Task Initialize()
     {
+        // Timing
+        Stopwatch stopwatch = new Stopwatch();
+        stopwatch.Start();
+
         // Create a list to store the tasks
         var tasks = new List<Task>();
 
@@ -31,7 +42,17 @@ public class LocalStorageDeviceService : ILocalStorageDeviceService
 
         // Wait for all tasks to complete
         await Task.WhenAll(tasks);
-        System.Diagnostics.Debug.WriteLine("LocalStorageDeviceService Initialized");
+
+        // Get the elapsed time as a TimeSpan value.
+        stopwatch.Stop();
+        TimeSpan ts = stopwatch.Elapsed;
+
+        // Format and display the TimeSpan value.
+        var elapsedTime = String.Format("{0:00}:{1:00}:{2:00}.{3:00}",
+            ts.Hours, ts.Minutes, ts.Seconds,
+            ts.Milliseconds / 10);
+
+        System.Diagnostics.Debug.WriteLine($"LocalStorageDeviceService Initialized in {elapsedTime}");
     }
 
     public async Task<IEnumerable<LocalStorageDevice>> GetLocalStorageDevicesAsync()
@@ -42,83 +63,91 @@ public class LocalStorageDeviceService : ILocalStorageDeviceService
         return _allStorageDeviceInfos;
     }
 
-    private static IEnumerable<LocalStorageDevice> GetDriveInfo()
+    private IEnumerable<LocalStorageDevice> GetDriveInfo()
     {
-        var drives = DriveInfo.GetDrives().Select(x => new LocalStorageDevice(x));
+        var drives = DriveInfo.GetDrives()
+            .Where(AccessControlService.CanListDirectory)
+            .Select(x => new LocalStorageDevice(x));
 
-        return drives.ToList().Where(DriveIsPermissible);
+        return drives;
     }
 
-    private static bool DriveIsPermissible(LocalStorageDevice drive)
-    {
-        try
-        {
-            _ = drive.VolumeLabel;
-            return true;
-        }
-        catch { }
-        return false;
-    }
-
-    public async Task<LocalStorageDeviceDetails> GetLocalStorageDeviceDetailsAsync(LocalStorageDevice localStorageDevice)
+    public async Task<LocalStorageDeviceAnalysis> GetLocalStorageDeviceDetailsAsync(LocalStorageDevice localStorageDevice)
     {
         if (!_localStorageDeviceDetailsTasks.ContainsKey(localStorageDevice))
         {
-            _localStorageDeviceDetailsTasks[localStorageDevice] = GetLocalStorageDeviceDetailsAsyncInternal(localStorageDevice);
-        }
+            _localStorageDeviceDetailsTasks[localStorageDevice] =
+                Task.Run(() =>
+                {
+                    LocalStorageDeviceAnalysis result = null;
+                    System.Diagnostics.Debug.WriteLine($"Analyzing {localStorageDevice.RootDirectory}");
+                    Stopwatch stopwatch = new Stopwatch();
+                    stopwatch.Start();
 
+                    try
+                    {
+                        result = GetDirectoryAnalysis(localStorageDevice.RootDirectory);
+                    }
+                    catch (Exception ex)
+                    {
+                        System.Diagnostics.Debug.WriteLine(ex);
+                    }
+
+                    stopwatch.Stop();
+                    TimeSpan ts = stopwatch.Elapsed;
+
+                    var elapsedTime = String.Format("{0:00}:{1:00}:{2:00}.{3:00}",
+                        ts.Hours, ts.Minutes, ts.Seconds,
+                        ts.Milliseconds / 10);
+
+                    System.Diagnostics.Debug.WriteLine($"{localStorageDevice.RootDirectory} analyzed in {elapsedTime}");
+                    return result;
+                });
+        }
         return await _localStorageDeviceDetailsTasks[localStorageDevice];
     }
 
-    private Task<LocalStorageDeviceDetails> GetLocalStorageDeviceDetailsAsyncInternal(LocalStorageDevice localStorageDevice)
+    private LocalStorageDeviceAnalysis GetDirectoryAnalysis(DirectoryInfo rootDirectory)
     {
-        return Task.Run(() =>
-        {
-            LocalStorageDeviceDetails localStorageDeviceDetails = new LocalStorageDeviceDetails();
-            GetLocalStorageDeviceDetails(localStorageDevice.RootDirectory, localStorageDeviceDetails);
-            return localStorageDeviceDetails;
-        });
-    }
+        LocalStorageDeviceAnalysis details = new LocalStorageDeviceAnalysis();
 
-    private void GetLocalStorageDeviceDetails(DirectoryInfo rootDirectory, LocalStorageDeviceDetails localStorageDeviceDetails)
-    {
-        try
+        foreach (var fileSystemInfo in rootDirectory.EnumerateFileSystemInfos())
         {
-            foreach (FileInfo file in rootDirectory.EnumerateFiles())
+            details.TotalDirectories++;
+            if (fileSystemInfo is FileInfo fileInfo)
             {
-                localStorageDeviceDetails.TotalFiles++;
+                details.TotalFiles++;
 
-                if (!MimeTypeResolver.TryGetMimeType(file, out var mimeType))
+                if (!MimeTypeResolver.TryGetMimeType(fileInfo, out var mimeType))
                 {
                     // Skip unknown MIME types for now
                     continue;
                 }
-                
-                if (!localStorageDeviceDetails.MimeTypeDetailsDictionary.ContainsKey(mimeType))
+                if (!details.MimeTypeDetailsDictionary.ContainsKey(mimeType))
                 {
-                    localStorageDeviceDetails.MimeTypeDetailsDictionary.Add(mimeType, new MimeTypeDetails(file.Extension, mimeType));
+                    details.MimeTypeDetailsDictionary.Add(mimeType, new MimeTypeDetails(fileInfo.Extension, mimeType));
                 }
-                localStorageDeviceDetails.MimeTypeDetailsDictionary[mimeType].TotalFiles++;
-                localStorageDeviceDetails.MimeTypeDetailsDictionary[mimeType].TotalSize += file.Length;
+                details.MimeTypeDetailsDictionary[mimeType].TotalFiles++;
+                details.MimeTypeDetailsDictionary[mimeType].TotalSize += fileInfo.Length;
             }
-
-            foreach (DirectoryInfo directoryInfo in rootDirectory.EnumerateDirectories())
+            else if (fileSystemInfo is DirectoryInfo directoryInfo)
             {
-                localStorageDeviceDetails.TotalDirectories++;
+                if (fileSystemInfo.FullName.StartsWith(Environment.GetFolderPath(Environment.SpecialFolder.Windows), StringComparison.OrdinalIgnoreCase) ||
+                    fileSystemInfo.FullName.StartsWith(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), StringComparison.OrdinalIgnoreCase) ||
+                    fileSystemInfo.FullName.StartsWith(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), StringComparison.OrdinalIgnoreCase))
+                {
+                    continue;
+                }
 
-                GetLocalStorageDeviceDetails(directoryInfo, localStorageDeviceDetails);
+                if (AccessControlService.IsSystemFolder(directoryInfo) || !AccessControlService.CanListDirectory(directoryInfo))
+                {
+                    continue;
+                }
+
+                details += GetDirectoryAnalysis(directoryInfo);
             }
         }
-        catch (UnauthorizedAccessException)
-        {
-            // Catch and ignore this exception if we don't have access to the directory
-        }
+
+        return details;
     }
-
-
-
-
-
-
-
 }
