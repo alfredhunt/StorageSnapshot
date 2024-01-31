@@ -12,6 +12,8 @@ public partial class ListDetailsViewModel : ObservableRecipient, INavigationAwar
 {
     private readonly ILocalStorageDeviceService _localStorageDeviceService;
 
+    public ILocalStorageDeviceService LocalStorageDeviceService => _localStorageDeviceService;
+
     [ObservableProperty]
     private LocalStorageDeviceViewModel? selected;
 
@@ -36,6 +38,7 @@ public partial class ListDetailsViewModel : ObservableRecipient, INavigationAwar
 
     public void OnNavigatedFrom()
     {
+
     }
 
     public void EnsureItemSelected()

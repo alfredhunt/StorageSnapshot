@@ -10,6 +10,11 @@ namespace StorageSnapshot.Core.Services;
 public class LocalStorageDeviceService : ILocalStorageDeviceService
 {
     private List<LocalStorageDevice> _allStorageDeviceInfos;
+
+    public void ReloadDrives() => _allStorageDeviceInfos = null;
+    public void AddDevice(LocalStorageDevice item) => _allStorageDeviceInfos?.Add(item);
+    public void RemoveDevice(LocalStorageDevice item) => _allStorageDeviceInfos?.Remove(item);
+
     private readonly Dictionary<LocalStorageDevice, Task<LocalStorageDeviceAnalysis>> _localStorageDeviceDetailsTasks = new();
 
     public IAccessControlService AccessControlService

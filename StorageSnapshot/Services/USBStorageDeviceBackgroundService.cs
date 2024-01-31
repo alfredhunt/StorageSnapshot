@@ -4,24 +4,10 @@ using CommunityToolkit.Mvvm.Messaging.Messages;
 using Microsoft.Extensions.Hosting;
 using StorageSnapshot.Contracts.Services;
 using StorageSnapshot.Helpers;
+using StorageSnapshot.Messages;
 using Windows.System;
 
 namespace StorageSnapshot.Services;
-
-public class UsbDeviceAddedMessage
-{
-    public required string DeviceId
-    {
-        get; set;
-    }
-}
-public class UsbDeviceRemovedMessage
-{
-    public required string DeviceId
-    {
-        get; set;
-    }
-}
 
 internal class USBStorageDeviceBackgroundService : BackgroundService
 {
@@ -76,7 +62,7 @@ internal class USBStorageDeviceBackgroundService : BackgroundService
                     _connectedDevices.Add(deviceId, logicalDiskId); // Store additional information as needed
 
                     // Send a message from some other module
-                    var message = new UsbDeviceAddedMessage { DeviceId = "SomeDeviceId" };
+                    var message = new UsbDeviceAddedMessage($@"{logicalDiskIdObject}\") { DeviceId = deviceId };
                     WeakReferenceMessenger.Default.Send(message);
                 }
             }
@@ -110,7 +96,7 @@ internal class USBStorageDeviceBackgroundService : BackgroundService
                 _connectedDevices.Remove(deviceId.ToString()); // Clean up
             }
 
-            var message = new UsbDeviceRemovedMessage { DeviceId = "SomeDeviceId" };
+            var message = new UsbDeviceRemovedMessage{ DeviceId = deviceId };
             WeakReferenceMessenger.Default.Send(message);
         };
 
