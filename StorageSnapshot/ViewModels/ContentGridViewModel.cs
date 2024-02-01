@@ -16,7 +16,6 @@ public partial class ContentGridViewModel : ObservableRecipient, INavigationAwar
 {
     private readonly INavigationService _navigationService;
     private readonly ILocalStorageDeviceService _localStorageDeviceService;
-    public ILocalStorageDeviceService LocalStorageDeviceService => _localStorageDeviceService;
 
     public ObservableCollection<LocalStorageDeviceViewModel> LocalStorageDevices { get; } = new ObservableCollection<LocalStorageDeviceViewModel>();
 

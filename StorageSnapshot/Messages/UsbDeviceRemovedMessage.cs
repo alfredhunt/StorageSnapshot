@@ -5,23 +5,11 @@ using StorageSnapshot.ViewModels;
 
 namespace StorageSnapshot.Messages;
 
-public class UsbDeviceRemovedMessage : IMessenger
+public sealed class UsbDeviceRemovedMessage : IMessenger
 {
     public required string DeviceId
     {
         get; set;
-    }
-
-    public UsbDeviceRemovedMessage()
-    {
-        var driveInfo = DriveInfo.GetDrives().FirstOrDefault(x => x.RootDirectory.Name == deviceId) ?? throw new Exception();
-        var localStorageDevice = new LocalStorageDevice(driveInfo);
-
-        var ListVM = App.GetService<ListDetailsViewModel>();
-        if (ListVM.LocalStorageDeviceService is LocalStorageDeviceService service)
-        {
-            service.RemoveDevice(localStorageDevice);
-        }
     }
 
     public void Cleanup() => throw new NotImplementedException();

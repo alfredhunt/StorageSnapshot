@@ -50,7 +50,7 @@ internal class USBStorageDeviceBackgroundService : BackgroundService
                     {
                         continue;
                     }
-                    var logicalDiskId = deviceIdObject.ToString();
+                    var logicalDiskId = logicalDiskIdObject.ToString();
                     if (logicalDiskId == null)
                     {
                         return;
@@ -62,7 +62,7 @@ internal class USBStorageDeviceBackgroundService : BackgroundService
                     _connectedDevices.Add(deviceId, logicalDiskId); // Store additional information as needed
 
                     // Send a message from some other module
-                    var message = new UsbDeviceAddedMessage($@"{logicalDiskIdObject}\") { DeviceId = deviceId };
+                    var message = new UsbDeviceAddedMessage() { DeviceId = logicalDiskId };
                     WeakReferenceMessenger.Default.Send(message);
                 }
             }
@@ -93,11 +93,12 @@ internal class USBStorageDeviceBackgroundService : BackgroundService
             {
                 var devicePath = _connectedDevices[deviceId.ToString()];
                 System.Diagnostics.Debug.WriteLine($"USB device removed: DeviceID: {deviceId}, Path: {devicePath}");
+
+                var message = new UsbDeviceRemovedMessage { DeviceId = devicePath };
+                WeakReferenceMessenger.Default.Send(message);
+
                 _connectedDevices.Remove(deviceId.ToString()); // Clean up
             }
-
-            var message = new UsbDeviceRemovedMessage{ DeviceId = deviceId };
-            WeakReferenceMessenger.Default.Send(message);
         };
 
         removeWatcher.Start();
@@ -121,4 +122,6 @@ internal class USBStorageDeviceBackgroundService : BackgroundService
         StopUSBDeviceMonitoring();
         base.Dispose();
     }
+
+    public void AddConnectedDevice(string deviceId, string driveLetter) => _connectedDevices.Add(deviceId, driveLetter);
 }

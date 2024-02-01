@@ -5,23 +5,11 @@ using StorageSnapshot.ViewModels;
 
 namespace StorageSnapshot.Messages;
 
-public class UsbDeviceAddedMessage : IMessenger
+public sealed class UsbDeviceAddedMessage : IMessenger
 {
     public required string DeviceId
     {
         get; set;
-    }
-
-    public UsbDeviceAddedMessage(string deviceId)
-    {
-        var driveInfo = DriveInfo.GetDrives().FirstOrDefault(x => x.RootDirectory.Name == deviceId) ?? throw new Exception();
-        var localStorageDevice = new LocalStorageDevice(driveInfo);
-
-        var ListVM = App.GetService<ListDetailsViewModel>();
-        if (ListVM.LocalStorageDeviceService is LocalStorageDeviceService service)
-        {
-            service.AddDevice(localStorageDevice);
-        }
     }
 
     public void Cleanup() => throw new NotImplementedException();

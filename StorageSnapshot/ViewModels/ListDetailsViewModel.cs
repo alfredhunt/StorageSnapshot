@@ -1,18 +1,23 @@
 ﻿using System.Collections.ObjectModel;
 
 using CommunityToolkit.Mvvm.ComponentModel;
-using StorageSnapshot.Contracts.Services;
+using CommunityToolkit.Mvvm.Messaging;
+using CommunityToolkit.WinUI;
+using Microsoft.UI.Dispatching;
+using Microsoft.UI.Xaml;
 using StorageSnapshot.Contracts.ViewModels;
 using StorageSnapshot.Core.Contracts.Services;
-using StorageSnapshot.Core.Services;
+using StorageSnapshot.Core.Models;
+using StorageSnapshot.Messages;
+using Windows.ApplicationModel.Core;
+using Windows.UI.Core;
 
 namespace StorageSnapshot.ViewModels;
 
-public partial class ListDetailsViewModel : ObservableRecipient, INavigationAware
+public partial class ListDetailsViewModel : ObservableRecipient, INavigationAware,
+    IRecipient<UsbDeviceAddedMessage>, IRecipient<UsbDeviceRemovedMessage>
 {
     private readonly ILocalStorageDeviceService _localStorageDeviceService;
-
-    public ILocalStorageDeviceService LocalStorageDeviceService => _localStorageDeviceService;
 
     [ObservableProperty]
     private LocalStorageDeviceViewModel? selected;
@@ -22,7 +27,11 @@ public partial class ListDetailsViewModel : ObservableRecipient, INavigationAwar
     public ListDetailsViewModel(ILocalStorageDeviceService localStorageDeviceService)
     {
         _localStorageDeviceService = localStorageDeviceService;
+
+        WeakReferenceMessenger.Default.Register<UsbDeviceAddedMessage>(this);
+        WeakReferenceMessenger.Default.Register<UsbDeviceRemovedMessage>(this);
     }
+
 
     public async void OnNavigatedTo(object parameter)
     {
@@ -44,5 +53,23 @@ public partial class ListDetailsViewModel : ObservableRecipient, INavigationAwar
     public void EnsureItemSelected()
     {
         Selected ??= LocalStorageDevices.First();
+    }
+
+    public void Receive(UsbDeviceAddedMessage message)
+    {
+        DriveInfo driveInfo = new(message.DeviceId);
+        LocalStorageDevice localStorageDevice = new(driveInfo);
+        var vm = new LocalStorageDeviceViewModel(_localStorageDeviceService, localStorageDevice);
+
+        LocalStorageDevices.Add(vm);
+    }
+
+    public void Receive(UsbDeviceRemovedMessage message)
+    {
+        DriveInfo driveInfo = new(message.DeviceId);
+        LocalStorageDevice localStorageDevice = new(driveInfo);
+        var vm = new LocalStorageDeviceViewModel(_localStorageDeviceService, localStorageDevice);
+
+        LocalStorageDevices.Remove(vm);
     }
 }

@@ -11,7 +11,7 @@ namespace StorageSnapshot.ViewModels;
 public partial class DataGridViewModel : ObservableRecipient, INavigationAware
 {
     private readonly ILocalStorageDeviceService _localStorageDeviceService;
-    public ILocalStorageDeviceService LocalStorageDeviceService => _localStorageDeviceService;
+
     private readonly Dictionary<string, MimeTypeDetails> _mimeTypeDetailsDictionary = new();
     public ObservableCollection<MimeTypeDetails> MimeTypeDetails { get; } = new ObservableCollection<MimeTypeDetails>();
 
