@@ -24,10 +24,13 @@ public partial class ListDetailsViewModel : ObservableRecipient, INavigationAwar
 
     public ObservableCollection<LocalStorageDeviceViewModel> LocalStorageDevices { get; private set; } = new ObservableCollection<LocalStorageDeviceViewModel>();
 
+    private readonly DispatcherQueue dispatcherQueue;
+
     public ListDetailsViewModel(ILocalStorageDeviceService localStorageDeviceService)
     {
         _localStorageDeviceService = localStorageDeviceService;
 
+        dispatcherQueue = DispatcherQueue.GetForCurrentThread();
         WeakReferenceMessenger.Default.Register<UsbDeviceAddedMessage>(this);
         WeakReferenceMessenger.Default.Register<UsbDeviceRemovedMessage>(this);
     }
@@ -55,21 +58,39 @@ public partial class ListDetailsViewModel : ObservableRecipient, INavigationAwar
         Selected ??= LocalStorageDevices.First();
     }
 
+
+
     public void Receive(UsbDeviceAddedMessage message)
+    {
+        dispatcherQueue.TryEnqueue(() => {
+            AddAsync(message);
+        });
+    }
+
+    public void Receive(UsbDeviceRemovedMessage message)
+    {
+        dispatcherQueue.TryEnqueue(() => {
+            RemoveAsync(message);
+        });
+    }
+
+    private async void AddAsync(UsbDeviceAddedMessage message)
     {
         DriveInfo driveInfo = new(message.DeviceId);
         LocalStorageDevice localStorageDevice = new(driveInfo);
         var vm = new LocalStorageDeviceViewModel(_localStorageDeviceService, localStorageDevice);
 
         LocalStorageDevices.Add(vm);
-    }
 
-    public void Receive(UsbDeviceRemovedMessage message)
+        await vm.LoadDetailsAsync();
+    }
+    private void RemoveAsync(UsbDeviceRemovedMessage message)
     {
         DriveInfo driveInfo = new(message.DeviceId);
-        LocalStorageDevice localStorageDevice = new(driveInfo);
-        var vm = new LocalStorageDeviceViewModel(_localStorageDeviceService, localStorageDevice);
 
-        LocalStorageDevices.Remove(vm);
+        var vm = LocalStorageDevices.FirstOrDefault(x => x.Device.Name == driveInfo.Name);
+
+        if(vm != null)
+            LocalStorageDevices.Remove(vm);
     }
 }
