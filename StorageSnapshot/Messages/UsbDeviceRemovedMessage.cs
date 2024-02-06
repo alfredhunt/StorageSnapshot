@@ -1,7 +1,4 @@
 ﻿using CommunityToolkit.Mvvm.Messaging;
-using StorageSnapshot.Core.Models;
-using StorageSnapshot.Core.Services;
-using StorageSnapshot.ViewModels;
 
 namespace StorageSnapshot.Messages;
 

@@ -1,7 +1,5 @@
-﻿using System;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using StorageSnapshot.Core.Contracts.Services;
-using StorageSnapshot.Core.Exceptions;
 using StorageSnapshot.Core.Helpers;
 using StorageSnapshot.Core.Models;
 
@@ -10,6 +8,8 @@ namespace StorageSnapshot.Core.Services;
 public class LocalStorageDeviceService : ILocalStorageDeviceService
 {
     private List<LocalStorageDevice> _allStorageDeviceInfos;
+
+    public List<LocalStorageDevice> AllStorageDeviceInfos => _allStorageDeviceInfos;
 
     private readonly Dictionary<LocalStorageDevice, Task<LocalStorageDeviceAnalysis>> _localStorageDeviceDetailsTasks = new();
 
@@ -151,4 +151,8 @@ public class LocalStorageDeviceService : ILocalStorageDeviceService
 
         return details;
     }
+
+    public void AddDevice(LocalStorageDevice device) => _allStorageDeviceInfos.Add(device);
+
+    public void RemoveDevice(LocalStorageDevice device) => _allStorageDeviceInfos.Remove(device);
 }
