@@ -25,7 +25,6 @@ public partial class MainViewModel : ObservableRecipient,
     {
         DriveInfo driveInfo = new(message.DeviceId);
         LocalStorageDevice localStorageDevice = new(driveInfo);
-        var vm = new LocalStorageDeviceViewModel(_localStorageDeviceService, localStorageDevice);
 
         if (_localStorageDeviceService is LocalStorageDeviceService localStorageDeviceService)
         {
@@ -40,7 +39,10 @@ public partial class MainViewModel : ObservableRecipient,
         if (_localStorageDeviceService is LocalStorageDeviceService localStorageDeviceService)
         {
             var device = localStorageDeviceService.AllStorageDeviceInfos.FirstOrDefault(x => x.Name == driveInfo.Name);
-            if (device == null) return;
+            if (device == null)
+            {
+                return;
+            }
 
             localStorageDeviceService.RemoveDevice(device);
         }
