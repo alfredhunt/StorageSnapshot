@@ -1,27 +1,11 @@
-﻿using System.Management;
+﻿using System.Diagnostics;
+using System.Management;
 using CommunityToolkit.Mvvm.Messaging;
-using CommunityToolkit.Mvvm.Messaging.Messages;
 using Microsoft.Extensions.Hosting;
-using StorageSnapshot.Contracts.Services;
-using StorageSnapshot.Helpers;
-using Windows.System;
+using StorageSnapshot.Core.Models;
+using StorageSnapshot.Messages;
 
 namespace StorageSnapshot.Services;
-
-public class UsbDeviceAddedMessage
-{
-    public required string DeviceId
-    {
-        get; set;
-    }
-}
-public class UsbDeviceRemovedMessage
-{
-    public required string DeviceId
-    {
-        get; set;
-    }
-}
 
 internal class USBStorageDeviceBackgroundService : BackgroundService
 {
@@ -32,6 +16,7 @@ internal class USBStorageDeviceBackgroundService : BackgroundService
 
     public void StartUSBDeviceMonitoring()
     {
+        PopulateConnectedDevices();
         // Watcher for USB connection
         insertWatcher = new ManagementEventWatcher();
         var queryInsert = new WqlEventQuery("SELECT * FROM __InstanceCreationEvent WITHIN 2 WHERE TargetInstance ISA 'Win32_DiskDrive'");
@@ -49,7 +34,7 @@ internal class USBStorageDeviceBackgroundService : BackgroundService
             {
                 return;
             }
-            System.Diagnostics.Debug.WriteLine($"USB device inserted: {instance?["Name"]}, DeviceID: {deviceId}");
+            Debug.WriteLine($"USB device inserted: {instance?["Name"]}, DeviceID: {deviceId}");
 
             // For the device path, you might need to query associated instances
             // For example, querying Win32_DiskPartition or Win32_LogicalDisk to get more details
@@ -64,19 +49,19 @@ internal class USBStorageDeviceBackgroundService : BackgroundService
                     {
                         continue;
                     }
-                    var logicalDiskId = deviceIdObject.ToString();
+                    var logicalDiskId = logicalDiskIdObject.ToString();
                     if (logicalDiskId == null)
                     {
                         return;
                     }
 
                     // This gives you the drive letter, which is often used as the path for removable drives
-                    System.Diagnostics.Debug.WriteLine($"Logical Disk: {logicalDiskId}");
+                    Debug.WriteLine($"Logical Disk: {logicalDiskId}");
 
                     _connectedDevices.Add(deviceId, logicalDiskId); // Store additional information as needed
 
                     // Send a message from some other module
-                    var message = new UsbDeviceAddedMessage { DeviceId = "SomeDeviceId" };
+                    var message = new UsbDeviceAddedMessage() { DeviceId = logicalDiskId };
                     WeakReferenceMessenger.Default.Send(message);
                 }
             }
@@ -101,20 +86,64 @@ internal class USBStorageDeviceBackgroundService : BackgroundService
             {
                 return;
             }
-            System.Diagnostics.Debug.WriteLine($"USB device removed: {instance?["Name"]}, DeviceID: {deviceId}");
+            Debug.WriteLine($"USB device removed: {instance?["Name"]}, DeviceID: {deviceId}");
 
             if (_connectedDevices.ContainsKey(deviceId))
             {
                 var devicePath = _connectedDevices[deviceId.ToString()];
-                System.Diagnostics.Debug.WriteLine($"USB device removed: DeviceID: {deviceId}, Path: {devicePath}");
+                Debug.WriteLine($"USB device removed: DeviceID: {deviceId}, Path: {devicePath}");
+
+                var message = new UsbDeviceRemovedMessage { DeviceId = devicePath };
+                WeakReferenceMessenger.Default.Send(message);
+
                 _connectedDevices.Remove(deviceId.ToString()); // Clean up
             }
-
-            var message = new UsbDeviceRemovedMessage { DeviceId = "SomeDeviceId" };
-            WeakReferenceMessenger.Default.Send(message);
         };
 
         removeWatcher.Start();
+    }
+
+    private void PopulateConnectedDevices()
+    {
+        var searcher = new ManagementObjectSearcher("SELECT * FROM Win32_DiskDrive");
+        foreach (var instance in searcher.Get())
+        {
+            var deviceIdObject = instance?["DeviceID"];
+            if (deviceIdObject == null)
+            {
+                continue;
+            }
+            var deviceId = deviceIdObject.ToString();
+            if (deviceId == null)
+            {
+                return;
+            }
+            Debug.WriteLine($"USB device discovered on startup: {instance?["Name"]}, DeviceID: {deviceId}");
+
+            searcher = new ManagementObjectSearcher($"ASSOCIATORS OF {{Win32_DiskDrive.DeviceID='{deviceId}'}} WHERE AssocClass = Win32_DiskDriveToDiskPartition");
+            foreach (var partition in searcher.Get())
+            {
+                var logicalSearcher = new ManagementObjectSearcher($"ASSOCIATORS OF {{Win32_DiskPartition.DeviceID='{partition["DeviceID"]}'}} WHERE AssocClass = Win32_LogicalDiskToPartition");
+                foreach (var logicalDisk in logicalSearcher.Get())
+                {
+                    var logicalDiskIdObject = logicalDisk?["DeviceID"];
+                    if (logicalDiskIdObject == null)
+                    {
+                        continue;
+                    }
+                    var logicalDiskId = logicalDiskIdObject.ToString();
+                    if (logicalDiskId == null)
+                    {
+                        return;
+                    }
+
+                    // This gives you the drive letter, which is often used as the path for removable drives
+                    Debug.WriteLine($"Logical Disk: {logicalDiskId}");
+
+                    _connectedDevices.Add(deviceId, logicalDiskId); // Store additional information as needed
+                }
+            }
+        }
     }
 
     public void StopUSBDeviceMonitoring()
